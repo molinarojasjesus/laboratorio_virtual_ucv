@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🌱 El Jardín del Descubrimiento - Laboratorio</title>
+    <style>
+        /* ===== RESET Y ESTILOS GLOBALES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #B5E8F7 40%, #90D26D 40%, #7BBF5A 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            touch-action: manipulation;
+            overflow-x: hidden;
+        }
+
+        .app {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+            border-radius: 40px 40px 30px 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1000px;
+            width: 100%;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            overflow: hidden;
+            border: 4px solid #FFF;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(90deg, #FF9800, #FFC107);
+            color: #FFF;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* MAIN LAYOUT (Escritorio por defecto) */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            height: 550px;
+        }
+
+        /* SIMULATOR CANVAS */
+        .canvas-section {
+            position: relative;
+            background: linear-gradient(180deg, #BAE6FD 0%, #E0F2FE 55%, #78350F 55%, #451a03 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .cloud {
+            position: absolute;
+            background: #FFF;
+            border-radius: 100px;
+            opacity: 0.85;
+            pointer-events: none;
+        }
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: #FFF;
+            border-radius: 50%;
+        }
+        .cloud1 { width: 120px; height: 40px; top: 15%; left: -150px; animation: moveCloud 25s linear infinite; }
+        .cloud1::before { width: 50px; height: 50px; top: -20px; left: 15px; }
+        .cloud1::after { width: 70px; height: 70px; top: -35px; left: 40px; }
+
+        .cloud2 { width: 80px; height: 30px; top: 35%; left: -100px; animation: moveCloud 18s linear infinite; animation-delay: 5s; }
+        .cloud2::before { width: 35px; height: 35px; top: -15px; left: 10px; }
+        .cloud2::after { width: 45px; height: 45px; top: -22px; left: 30px; }
+
+        @keyframes moveCloud {
+            0% { left: -150px; }
+            100% { left: 100%; }
+        }
+
+        .sun-canvas {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 3.5rem;
+            animation: pulseSun 4s ease-in-out infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes pulseSun {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px #FFEB3B); }
+            50% { transform: scale(1.15); filter: drop-shadow(0 0 25px #FF9800); }
+        }
+
+        .garden-zone {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 45%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .soil-container {
+            position: relative;
+            width: 300px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .dropzone {
+            position: absolute;
+            top: -10px;
+            width: 140px;
+            height: 55px;
+            background: rgba(255, 235, 59, 0.25);
+            border: 3px dashed #FFEB3B;
+            border-radius: 50%;
+            z-index: 15;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #FFF;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            transition: all 0.3s ease;
+            pointer-events: auto;
+        }
+        .dropzone.dragover {
+            background: rgba(76, 175, 80, 0.4);
+            border-color: #4CAF50;
+            transform: scale(1.1);
+        }
+        .dropzone.hidden {
+            display: none !important;
+        }
+
+        .plant-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 5;
+            pointer-events: none;
+            transition: bottom 0.5s ease-in-out; 
+        }
+
+        .plant-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15));
+            display: none;
+            transform-origin: bottom center;
+        }
+
+        .plant-emoji {
+            font-size: 6.5rem;
+            animation: growIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: block;
+            transform-origin: bottom center;
+        }
+
+        @keyframes growIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .plant-label-tag {
+            position: absolute;
+            top: -40px;
+            background: rgba(0, 0, 0, 0.75);
+            color: #FFF;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            letter-spacing: 0.5px;
+            z-index: 20;
+        }
+
+        .effects-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 55%;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .particle {
+            position: absolute;
+            animation: fallEffect 0.8s linear forwards;
+        }
+        @keyframes fallEffect {
+            0% { transform: translateY(-20px) scale(0.5); opacity: 0; }
+            30% { opacity: 1; }
+            100% { transform: translateY(200px) scale(1); opacity: 0; }
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: flySparkle 1s ease-out forwards;
+        }
+        @keyframes flySparkle {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translate(var(--mx), var(--my)) scale(1.3); opacity: 0; }
+        }
+
+        /* CONTROLES E HISTORIAL */
+        .control-section {
+            background: #FFF;
+            display: flex;
+            flex-direction: column;
+            border-left: 2px solid #E2E8F0;
+            padding: 20px;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: #334155;
+            font-weight: 700;
+            border-bottom: 3px solid #E2E8F0;
+            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .seed-selector {
+            display: flex;
+            gap: 12px;
+        }
+
+        .seed-card {
+            flex: 1;
+            background: #F8FAFC;
+            border: 3px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            cursor: grab;
+            transition: all 0.25s ease;
+            position: relative;
+            touch-action: none;
+        }
+        .seed-card:active { cursor: grabbing; }
+        .seed-card.selected {
+            border-color: #FF9800;
+            background: #FFFDE7;
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.15);
+        }
+
+        .seed-icon {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        .seed-card:hover .seed-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .seed-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #475569;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .tool-btn {
+            background: #F1F5F9;
+            border: 2px solid #CBD5E1;
+            border-radius: 16px;
+            padding: 12px 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .tool-btn:hover:not(:disabled) {
+            background: #E2E8F0;
+            transform: translateY(-2px);
+        }
+        .tool-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .tool-btn .icon { font-size: 1.8rem; }
+        .tool-btn.active-water { border-color: #2196F3; background: #E3F2FD; color: #1E88E5; }
+        .tool-btn.active-sun { border-color: #FFC107; background: #FFFDE7; color: #F57F17; }
+        .tool-btn.active-clock { border-color: #4CAF50; background: #E8F5E9; color: #2E7D32; }
+        .tool-btn.active-lupa { border-color: #9C27B0; background: #F3E5F5; color: #7B1FA2; }
+
+        /* Marcador de Progreso */
+        .progress-box {
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        .progress-days {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1E293B;
+            margin-bottom: 8px;
+        }
+
+        .progress-track {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 10px 5px 5px 5px;
+        }
+        .progress-track::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #E2E8F0;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .progress-step {
+            width: 14px;
+            height: 14px;
+            background: #CBD5E1;
+            border-radius: 50%;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        .progress-step.active {
+            background: #4CAF50;
+            transform: scale(1.3);
+            box-shadow: 0 0 8px #4CAF50;
+        }
+
+        /* DIÁLOGOS */
+        .dialogue-section {
+            background: #FFF7ED;
+            border-top: 3px solid #FFEDD5;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 75px;
+            height: 75px;
+            flex-shrink: 0;
+        }
+
+        .avatar-bg {
+            width: 100%;
+            height: 100%;
+            background: #FFD9A6;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.2rem;
+            box-shadow: 0 4px 10px rgba(217,119,6,0.2);
+            border: 3px solid #FFF;
+        }
+
+        .audio-wave {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .audio-wave:hover { transform: scale(1.15); }
+        .audio-wave.speaking { animation: bounce 0.5s infinite alternate; background: #E91E63; }
+
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.25); }
+        }
+
+        .dialogue-bubble {
+            background: #FFF;
+            border: 2px solid #FFEDD5;
+            border-radius: 20px;
+            padding: 12px 20px;
+            flex-grow: 1;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        .dialogue-bubble::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
+            width: 16px;
+            height: 16px;
+            background: #FFF;
+            border-left: 2px solid #FFEDD5;
+            border-bottom: 2px solid #FFEDD5;
+        }
+
+        .dialogue-text {
+            font-size: 1.02rem;
+            color: #7C2D12;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .btn-reset {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid #FFF;
+            color: #FFF;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-reset:hover { background: #FFF; color: #D97706; }
+        .hidden { display: none !important; }
+
+        /* =========================================================
+           ===== SOLUCIÓN DE ADAPTACIÓN RESPONSIVA PARA MÓVILES =====
+           ========================================================= */
+        @media (max-width: 850px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto;
+                height: auto; /* Permite que el bloque crezca de forma natural hacia abajo */
+            }
+            
+            .canvas-section {
+                height: 380px; /* Evita que el cielo ocupe toda la pantalla del teléfono */
+            }
+
+            .control-section {
+                border-left: none;
+                border-top: 2px solid #E2E8F0;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            header h1 { font-size: 1.4rem; }
+            header p { font-size: 0.85rem; }
+            .tools-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .seed-selector { gap: 8px; }
+            .seed-card { padding: 8px; }
+            .seed-icon { font-size: 1.8rem; }
+            .avatar-container { width: 65px; height: 65px; }
+            .avatar-bg { font-size: 2.6rem; }
+            .dialogue-text { font-size: 0.95rem; }
+            .dialogue-section { padding: 12px 15px; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <header>
+        <h1>🌱 Laboratorio del Ciclo de Vida</h1>
+        <p>¡Investiga el ciclo biológico completo (Nacer, Crecer, Reproducirse y Morir) con Don Jacinto!</p>
+        <button class="btn-reset" id="btnReset">🔄 Reiniciar</button>
+    </header>
+
+    <div class="main-content">
+        <section class="canvas-section" id="canvasSection">
+            <div class="cloud cloud1"></div>
+            <div class="cloud cloud2"></div>
+            <div class="sun-canvas">☀️</div>
+            <div class="effects-overlay" id="effectsContainer"></div>
+
+            <div class="plant-container" id="plantContainer">
+                <span class="plant-label-tag" id="plantLabel">¡Elige una semilla!</span>
+                <img src="" alt="Etapa Planta" class="plant-img" id="plantStageImg" referrerPolicy="no-referrer">
+                <div class="plant-emoji" id="plantStageEmoji">❓</div>
+            </div>
+
+            <div class="garden-zone">
+                <div class="soil-container">
+                    <div class="dropzone" id="potDropzone">Arrastra aquí la semilla</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="control-section">
+            <div>
+                <h2 class="section-title">📦 1. Elige tu Semilla</h2>
+                <div class="seed-selector">
+                    <div class="seed-card selected" data-seed="maiz" draggable="true" id="seedMaiz">
+                        <span class="seed-icon">🌽</span>
+                        <div class="seed-name">Semilla Maíz</div>
+                    </div>
+                    <div class="seed-card" data-seed="girasol" draggable="true" id="seedGirasol">
+                        <span class="seed-icon">🌻</span>
+                        <div class="seed-name">Semilla Girasol</div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="section-title">🧰 2. Herramientas</h2>
+                <div class="tools-grid">
+                    <button class="tool-btn" id="toolWater">
+                        <span class="icon">💧</span>
+                        <span>Regar Agua</span>
+                    </button>
+                    <button class="tool-btn" id="toolSun">
+                        <span class="icon">☀️</span>
+                        <span>Dar Luz Sol</span>
+                    </button>
+                    <button class="tool-btn" id="toolClock">
+                        <span class="icon">⏳</span>
+                        <span>Dejar Crecer</span>
+                    </button>
+                    <button class="tool-btn" id="toolLupa">
+                        <span class="icon">🔍</span>
+                        <span>Investigar</span>
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="section-title">📊 3. Bitácora del Tiempo</h2>
+                <div class="progress-box">
+                    <div class="progress-days" id="progressDays">Día: 0</div>
+                    <div class="progress-track">
+                        <div class="progress-step active"></div>
+                        <div class="progress-step"></div>
+                        <div class="progress-step"></div>
+                        <div class="progress-step"></div>
+                        <div class="progress-step"></div>
+                        <div class="progress-step"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="dialogue-section">
+        <div class="avatar-container">
+            <div class="avatar-bg">👨🏽‍🌾</div>
+            <div class="audio-wave" id="audioBtn" title="Escuchar a Don Jacinto">🔊</div>
+        </div>
+        <div class="dialogue-bubble">
+            <p class="dialogue-text" id="dialogueText">¡Hola investigador! Soy Don Jacinto. Comencemos seleccionando y arrastrando la semilla de maíz o girasol a la tierra húmeda.</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const PLANT_DATA = {
+        maiz: {
+            name: "Semilla de maíz",
+            // NUEVO ARRAY DE TIEMPO REAL ACTUALIZADO
+            growthDays: [0, 6, 20, 60, 95, 135],
+            emojis: ['🕳️', '🌱', '🌿', '🌾', '🌽', '🍂'],
+            scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
+            // MAPA DE POSICIONES CALIBRADO PARA PROFUNDIDAD REALISTA
+            positions: ["15%", "22%", "30%", "30%", "30%", "30%"],
+            images: [
+                "https://lh3.googleusercontent.com/d/1Y6njDONPmHmLP2ZB4LF7vb_-06dBtMUx",
+                "https://lh3.googleusercontent.com/d/14DVVaS6JvpeudgbNjdqR2DOKk1j8Pbhu",
+                "https://lh3.googleusercontent.com/d/1IW13g1r8eLkcxRcfu2z8Uzrxwi9gpPt_",
+                "https://lh3.googleusercontent.com/d/1xJBTalWmLVPip0WacG0CIdUFmVGjrhJ2",
+                "https://lh3.googleusercontent.com/d/1OG_rKXeBQ7L3XGLYggqQao3mKcIcwB_Y",
+                "https://lh3.googleusercontent.com/d/1mPs7hX1VswUMfKQoEYhJKmVG7iO1Tl_S"
+            ],
+            descriptions: [
+                "Día 0: Grano de maíz durmiendo bajo tierra húmeda.",
+                "Día 6: ¡Germinación! Emerge un brote verde buscando el cielo.",
+                "Día 20: Plántula joven con hojas delgadas en abanico.",
+                "Día 60: Planta alta y robusta que absorbe la luz del sol.",
+                "Día 95: ¡Salió el fruto! Mazorcas llenas de granos nutritivos.",
+                "Día 135: Ciclo cumplido. La planta se seca y devuelve su energía al suelo."
+            ],
+            details: [
+                "El grano absorbe agua para despertar al embrión que lleva dentro.",
+                "Nace una raíz principal hacia abajo y un capuchón protector empuja el tallo hacia arriba.",
+                "El sistema de raíces crece como una gran cabellera para sujetar fuerte a la planta.",
+                "Las hojas anchas atrapan la luz solar para hacer fotosíntesis y crear energía.",
+                "¡Éxito reproductivo! Cada pelito de la mazorca recibió polen para formar un grano.",
+                "La planta muere de forma natural, pero nos deja sus mazorcas llenas de nuevas semillas para volver a sembrar."
+            ]
+        },
+        girasol: {
+            name: "Semilla de girasol",
+            // NUEVO ARRAY DE TIEMPO REAL ACTUALIZADO
+            growthDays: [0, 5, 18, 45, 70, 100],
+            emojis: ['🌻', '🌱', '🌿', '🪴', '🌻', '🥀'],
+            scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
+            positions: ["15%", "22%", "30%", "30%", "30%", "30%"],
+            images: [
+                "https://lh3.googleusercontent.com/d/1bGrs6xFj6HwcyTEImQ5wblKLwhSSX_tq",
+                "https://lh3.googleusercontent.com/d/1szLnrEFdTMp95o3eHkhHTPS9ysGqpUWK",
+                "https://lh3.googleusercontent.com/d/1jUaezlsEfRzrP5j4WyXH-53v0xfqBn3-",
+                "https://lh3.googleusercontent.com/d/1Wrw27BfVqhtAzgyj0BnpLkDWgOT-TInt",
+                "https://lh3.googleusercontent.com/d/1vy15bUXEpfXmSPpY299RcV6UtkehRgGd",
+                "https://lh3.googleusercontent.com/d/1mzI4nnhg1NSBSnq9KNjHyf1jSMSaqfIf"
+            ],
+            descriptions: [
+                "Día 0: Semilla de girasol oculta esperando el agua de la vida.",
+                "Día 5: ¡Brote inicial! La cáscara se rompe y sale la raíz.",
+                "Día 18: Plántula con hojas vellosas extendidas.",
+                "Día 45: Aparece el botón floral en la punta del gran tallo.",
+                "Día 70: ¡Floración espectacular! Una hermosa corona amarilla abierta.",
+                "Día 100: Fin del ciclo. La flor se marchita y sus semillas maduras caen."
+            ],
+            details: [
+                "La cáscara dura protege a la semilla hasta que la humedad del suelo la ablanda.",
+                "La pequeña raíz crece buscando gravedad y agua, mientras las hojitas buscan el sol.",
+                "Las hojas tienen pequeños pelitos para protegerse y evitar perder su humedad.",
+                "¡Mira el botón! En esta etapa el girasol se mueve siguiendo al sol de este a oeste.",
+                "La gran flor amarilla atrae abejas que ayudan a crear cientos de nuevas pepas en su centro.",
+                "La planta se marchita y muere, pero regala sus semillas al viento y a las aves para que nazcan nuevos girasoles."
+            ]
+        }
+    };
+
+    const el = {
+        seedCards: document.querySelectorAll('.seed-card'),
+        potDropzone: document.getElementById('potDropzone'),
+        plantContainer: document.getElementById('plantContainer'),
+        plantLabel: document.getElementById('plantLabel'),
+        plantStageImg: document.getElementById('plantStageImg'),
+        plantStageEmoji: document.getElementById('plantStageEmoji'),
+        toolWater: document.getElementById('toolWater'),
+        toolSun: document.getElementById('toolSun'),
+        toolClock: document.getElementById('toolClock'),
+        toolLupa: document.getElementById('toolLupa'),
+        progressDays: document.getElementById('progressDays'),
+        progressSteps: document.querySelectorAll('.progress-step'),
+        dialogueText: document.getElementById('dialogueText'),
+        audioBtn: document.getElementById('audioBtn'),
+        btnReset: document.getElementById('btnReset'),
+        effectsContainer: document.getElementById('effectsContainer')
+    };
+
+    let state = {
+        selectedSeed: 'maiz',
+        plantActive: false,
+        stage: 0,
+        watered: false,
+        sunny: false,
+        isSpeaking: false
+    };
+
+    let dragData = null;
+
+    function speak(text) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-PE';
+        const voices = window.speechSynthesis.getVoices();
+        const localVoice = voices.find(v => v.lang.includes('PE') || v.lang.includes('ES'));
+        if (localVoice) utterance.voice = localVoice;
+
+        utterance.onstart = () => { state.isSpeaking = true; el.audioBtn.classList.add('speaking'); };
+        utterance.onend = () => { state.isSpeaking = false; el.audioBtn.classList.remove('speaking'); };
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function setDialogue(text) {
+        el.dialogueText.textContent = text;
+        speak(text);
+    }
+
+    el.audioBtn.addEventListener('click', () => speak(el.dialogueText.textContent));
+
+    // DRAG AND DROP LÓGICA
+    el.seedCards.forEach(card => {
+        card.addEventListener('dragstart', (e) => {
+            if(state.plantActive) { e.preventDefault(); return; }
+            dragData = card.dataset.seed;
+            card.classList.add('selected');
+        });
+        card.addEventListener('touchstart', (e) => {
+            if(state.plantActive) return;
+            dragData = card.dataset.seed;
+            el.seedCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+        }, { passive: true });
+    });
+
+    el.potDropzone.addEventListener('dragover', (e) => { e.preventDefault(); el.potDropzone.classList.add('dragover'); });
+    el.potDropzone.addEventListener('dragleave', () => el.potDropzone.classList.remove('dragover'));
+    el.potDropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        el.potDropzone.classList.remove('dragover');
+        if (dragData) plantSeed(dragData);
+    });
+
+    document.addEventListener('touchend', (e) => {
+        if (!dragData || state.plantActive) return;
+        const touch = e.changedTouches[0];
+        const rect = el.potDropzone.getBoundingClientRect();
+        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+            plantSeed(dragData);
+        }
+        dragData = null;
+    });
+
+    el.seedCards.forEach(card => {
+        card.addEventListener('click', () => {
+            if (state.plantActive) {
+                setDialogue("¡Ya hay una planta creciendo! Presiona reiniciar si deseas experimentar con otra semilla.");
+                return;
+            }
+            state.selectedSeed = card.dataset.seed;
+            el.seedCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            
+            const config = PLANT_DATA[state.selectedSeed];
+            el.plantLabel.textContent = config.name;
+            setDialogue(`Has elegido la ${config.name}. Arrástrala a la tierra húmeda para sembrarla.`);
+        });
+    });
+
+    function plantSeed(seedType) {
+        state.selectedSeed = seedType;
+        state.plantActive = true;
+        state.stage = 0;
+        state.watered = false;
+        state.sunny = false;
+
+        el.seedCards.forEach(c => { if(c.dataset.seed !== seedType) c.style.opacity = '0.3'; });
+        el.potDropzone.classList.add('hidden');
+        
+        el.toolWater.disabled = false;
+        el.toolSun.disabled = false;
+        el.toolClock.disabled = true;
+        el.toolLupa.disabled = false;
+
+        updateVisuals();
+        setDialogue(`¡Semilla plantada bajo tierra! Ahora necesita elementos de la naturaleza para brotar. Dale Agua y Luz Solar.`);
+    }
+
+    function updateVisuals() {
+        const config = PLANT_DATA[state.selectedSeed];
+        el.progressDays.textContent = `Días transcurridos: ${config.growthDays[state.stage]}`;
+        el.plantLabel.textContent = `${config.name} - Etapa ${state.stage}`;
+
+        el.progressSteps.forEach((step, idx) => {
+            step.classList.remove('active');
+            if (idx <= state.stage) step.classList.add('active');
+        });
+
+        // Aplicamos la posición 'bottom' calibrada para esta etapa específica
+        el.plantContainer.style.bottom = config.positions[state.stage];
+
+        // Aplicamos el tamaño progresivo según la etapa actual
+        const currentScale = config.scales[state.stage];
+        el.plantStageImg.style.transform = `scale(${currentScale})`;
+        el.plantStageEmoji.style.transform = `scale(${currentScale})`;
+
+        el.plantStageImg.style.display = 'block';
+        el.plantStageEmoji.style.display = 'none';
+        el.plantStageImg.src = config.images[state.stage];
+
+        el.plantStageImg.onerror = () => {
+            el.plantStageImg.style.display = 'none';
+            el.plantStageEmoji.style.display = 'block';
+            el.plantStageEmoji.textContent = config.emojis[state.stage];
+        };
+    }
+
+    el.toolWater.addEventListener('click', () => {
+        state.watered = true;
+        el.toolWater.classList.add('active-water');
+        createWaterParticles();
+        checkNutrients();
+    });
+
+    el.toolSun.addEventListener('click', () => {
+        state.sunny = true;
+        el.toolSun.classList.add('active-sun');
+        createSunSparkles();
+        checkNutrients();
+    });
+
+    function checkNutrients() {
+        if (state.watered && state.sunny) {
+            el.toolClock.disabled = false;
+            setDialogue("¡Excelente! Las condiciones ambientales son perfectas. Presiona el reloj (⏳ Dejar Crecer) para avanzar en el tiempo.");
+        }
+    }
+
+    el.toolClock.addEventListener('click', () => {
+        if (state.stage < 5) {
+            state.stage++;
+            state.watered = false;
+            state.sunny = false;
+
+            el.toolWater.classList.remove('active-water');
+            el.toolSun.classList.remove('active-sun');
+            el.toolClock.disabled = true;
+
+            updateVisuals();
+            const config = PLANT_DATA[state.selectedSeed];
+            
+            if (state.stage === 5) {
+                setDialogue(`¡Llegamos a la etapa final! ${config.descriptions[state.stage]} Usa la Lupa para investigar este importante proceso.`);
+                el.toolWater.disabled = true;
+                el.toolSun.disabled = true;
+            } else {
+                setDialogue(`¡Mira cómo creció! ${config.descriptions[state.stage]} Vuelve a darle agua y sol para que siga su curso.`);
+            }
+        }
+    });
+
+    el.toolLupa.addEventListener('click', () => {
+        const config = PLANT_DATA[state.selectedSeed];
+        setDialogue(config.details[state.stage]);
+    });
+
+    function createWaterParticles() {
+        for (let i = 0; i < 20; i++) {
+            const part = document.createElement('div');
+            part.className = 'particle';
+            part.textContent = '💧';
+            part.style.left = `${Math.random() * 60 + 20}%`;
+            part.style.top = `${Math.random() * 20}%`;
+            part.style.animationDelay = `${Math.random() * 0.4}s`;
+            el.effectsContainer.appendChild(part);
+            setTimeout(() => part.remove(), 1200);
+        }
+    }
+
+    function createSunSparkles() {
+        for (let i = 0; i < 15; i++) {
+            const spark = document.createElement('div');
+            spark.className = 'sparkle';
+            spark.textContent = '✨';
+            spark.style.left = `${Math.random() * 50 + 25}%`;
+            spark.style.top = `${Math.random() * 30 + 10}%`;
+            spark.style.setProperty('--mx', `${(Math.random() - 0.5) * 80}px`);
+            spark.style.setProperty('--my', `${(Math.random() - 0.5) * 80}px`);
+            el.effectsContainer.appendChild(spark);
+            setTimeout(() => spark.remove(), 1200);
+        }
+    }
+
+    el.btnReset.addEventListener('click', () => {
+        state.plantActive = false;
+        state.stage = 0;
+        state.watered = false;
+        state.sunny = false;
+
+        el.seedCards.forEach(c => c.style.opacity = '1');
+        el.potDropzone.classList.remove('hidden');
+        
+        el.toolWater.disabled = true; el.toolSun.disabled = true;
+        el.toolClock.disabled = true; el.toolLupa.disabled = true;
+        el.toolWater.classList.remove('active-water');
+        el.toolSun.classList.remove('active-sun');
+
+        el.progressDays.textContent = "Día: 0";
+        el.plantLabel.textContent = "¡Elige una semilla!";
+        el.plantStageImg.style.display = 'none';
+        el.plantStageEmoji.style.display = 'block';
+        el.plantStageEmoji.textContent = '❓';
+        el.plantStageImg.style.transform = 'scale(1)';
+        el.plantStageEmoji.style.transform = 'scale(1)';
+        el.plantContainer.style.bottom = '42%';
+
+        el.progressSteps.forEach((step, idx) => {
+            step.classList.remove('active');
+            if (idx === 0) step.classList.add('active');
+        });
+
+        el.effectsContainer.innerHTML = '';
+        setDialogue('¡Laboratorio reiniciado! Selecciona una nueva semilla arriba para volver a investigar con Don Jacinto.');
+    });
+
+    function init() {
+        el.toolWater.disabled = true; el.toolSun.disabled = true;
+        el.toolClock.disabled = true; el.toolLupa.disabled = true;
+        el.plantStageImg.style.display = 'none';
+        el.plantStageEmoji.style.display = 'block';
+        el.plantStageEmoji.textContent = '❓';
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
