@@ -40,6 +40,7 @@
             border: 4px solid #FFF;
         }
 
+        /* HEADER INSTITUCIONAL */
         header {
             background: linear-gradient(90deg, #1E3A8A, #3B82F6);
             color: #FFF;
@@ -114,12 +115,14 @@
             font-weight: 500;
         }
 
+        /* MAIN LAYOUT */
         .main-content {
             display: grid;
             grid-template-columns: 1fr 340px;
             height: 550px;
         }
 
+        /* SIMULATOR CANVAS */
         .canvas-section {
             position: relative;
             background: linear-gradient(180deg, #BAE6FD 0%, #E0F2FE 55%, #78350F 55%, #451a03 100%);
@@ -305,6 +308,7 @@
             100% { transform: translate(var(--mx), var(--my)) scale(1.3); opacity: 0; }
         }
 
+        /* CONTROLES E HISTORIAL */
         .control-section {
             background: #FFF;
             display: flex;
@@ -464,6 +468,7 @@
             box-shadow: 0 0 8px #4CAF50;
         }
 
+        /* DIÁLOGOS */
         .dialogue-section {
             background: #FFF7ED;
             border-top: 3px solid #FFEDD5;
@@ -510,7 +515,6 @@
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        .audio-wave.speaking { background: #E91E63; }
 
         .dialogue-bubble {
             background: #FFF;
@@ -541,7 +545,11 @@
         }
 
         @media (max-width: 850px) {
-            .main-content { grid-template-columns: 1fr; grid-template-rows: auto auto; height: auto; }
+            .main-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto;
+                height: auto;
+            }
             .canvas-section { height: 380px; }
             .control-section { border-left: none; border-top: 2px solid #E2E8F0; padding: 15px; }
         }
@@ -553,7 +561,7 @@
     <header>
         <div class="institution-header">
             <div class="logo-ucv-container">
-                <img src="logo-ucv.png" alt="Logo UCV" id="logoUcv">
+                <img src="logo_ucv.png" alt="Logo UCV" id="logoUcv">
             </div>
             <div class="institution-text">
                 <h2>UNIVERSIDAD CÉSAR VALLEJO</h2>
@@ -661,7 +669,7 @@
             growthDays: [0, 6, 20, 60, 95, 135],
             scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
             positions: ["15%", "22%", "30%", "30%", "30%", "30%"],
-            images: ["maiz0.png", "maiz1.png", "maiz2.png", "maiz3.png", "maiz4.png", "maiz5.png"],
+            images: ["maiz_1.png", "maiz_2.png", "maiz_3.png", "maiz_4.png", "maiz_5.png", "maiz_6.png"],
             descriptions: [
                 "Día 0: Grano de maíz durmiendo bajo tierra húmeda.",
                 "Día 6: ¡Germinación! Emerge un brote verde buscando el cielo.",
@@ -684,7 +692,7 @@
             growthDays: [0, 5, 18, 45, 70, 100],
             scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
             positions: ["15%", "22%", "30%", "30%", "30%", "30%"],
-            images: ["girasol0.png", "girasol1.png", "girasol2.png", "girasol3.png", "girasol4.png", "girasol5.png"],
+            images: ["girasol_0.png", "girasol_1.png", "girasol_2.png", "girasol_3.png", "girasol_4.png", "girasol_5.png"],
             descriptions: [
                 "Día 0: Semilla de girasol oculta esperando el agua de la vida.",
                 "Día 5: ¡Brote inicial! La cáscara se rompe y sale la raíz.",
