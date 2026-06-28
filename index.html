@@ -22,7 +22,7 @@
             justify-content: center;
             align-items: center;
             padding: 10px;
-            padding-top: 25px; /* Margen superior para evitar cortes en Google Sites */
+            padding-top: 25px;
             touch-action: manipulation;
             overflow-x: hidden;
         }
@@ -40,7 +40,7 @@
             border: 4px solid #FFF;
         }
 
-        /* HEADER INSTITUCIONAL MEJORADO */
+        /* HEADER INSTITUCIONAL */
         header {
             background: linear-gradient(90deg, #1E3A8A, #3B82F6);
             color: #FFF;
@@ -59,14 +59,17 @@
             padding-bottom: 10px;
         }
 
-        .logo-ucv {
-            width: auto;
-            height: 48px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        .logo-placeholder-emoji {
+            font-size: 2.2rem;
             background: white;
-            padding: 4px 8px;
-            border-radius: 8px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
 
         .institution-text {
@@ -105,7 +108,7 @@
             font-weight: 500;
         }
 
-        /* MAIN LAYOUT (Escritorio por defecto) */
+        /* MAIN LAYOUT */
         .main-content {
             display: grid;
             grid-template-columns: 1fr 340px;
@@ -207,7 +210,6 @@
             cursor: pointer;
         }
         
-        /* EFECTO DE PULSACIÓN DE ESPERA */
         .dropzone.waiting-touch {
             animation: pulseTarget 1.2s infinite alternate;
             background: rgba(76, 175, 80, 0.35);
@@ -243,21 +245,12 @@
             transition: bottom 0.5s ease-in-out; 
         }
 
-        .plant-img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15));
-            display: none;
-            transform-origin: bottom center;
-        }
-
         .plant-emoji {
-            font-size: 6.5rem;
+            font-size: 7rem;
             animation: growIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: block;
             transform-origin: bottom center;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
         }
 
         @keyframes growIn {
@@ -349,9 +342,7 @@
             transition: all 0.25s ease;
             position: relative;
         }
-        .seed-card:active {
-            cursor: grabbing;
-        }
+        .seed-card:active { cursor: grabbing; }
         
         .seed-card.selected {
             border-color: #3B82F6;
@@ -371,11 +362,9 @@
             margin-bottom: 5px;
             display: inline-block;
             transition: transform 0.2s;
-            pointer-events: none; /* Evita interferencias en drag & drop */
+            pointer-events: none;
         }
-        .seed-card:hover .seed-icon {
-            transform: scale(1.15) rotate(5deg);
-        }
+        .seed-card:hover .seed-icon { transform: scale(1.15) rotate(5deg); }
 
         .seed-name {
             font-size: 0.85rem;
@@ -428,9 +417,7 @@
             grid-column: span 2;
             margin-top: 5px;
         }
-        .tool-btn.btn-reset:hover {
-            background: #FECDD3;
-        }
+        .tool-btn.btn-reset:hover { background: #FECDD3; }
 
         /* Marcador de Progreso */
         .progress-box {
@@ -565,43 +552,24 @@
             line-height: 1.45;
         }
 
-        /* RESPONSIVO MÓVIL GENERAL */
+        /* RESPONSIVO MÓVIL */
         @media (max-width: 850px) {
             .main-content {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto auto;
                 height: auto;
             }
-            
-            .canvas-section {
-                height: 380px;
-            }
-
-            .control-section {
-                border-left: none;
-                border-top: 2px solid #E2E8F0;
-                padding: 15px;
-            }
+            .canvas-section { height: 380px; }
+            .control-section { border-left: none; border-top: 2px solid #E2E8F0; padding: 15px; }
         }
 
         @media (max-width: 520px) {
             .institution-header { gap: 10px; }
-            .logo-ucv { height: 38px; }
+            .logo-placeholder-emoji { width: 40px; height: 40px; font-size: 1.7rem; }
             .institution-text h2 { font-size: 0.95rem; }
             .institution-text p { font-size: 0.75rem; }
             .game-title-container h1 { font-size: 1.3rem; }
             .game-title-container p { font-size: 0.8rem; }
-        }
-
-        @media (max-width: 420px) {
-            .tools-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .seed-selector { gap: 8px; }
-            .seed-card { padding: 8px; }
-            .seed-icon { font-size: 1.8rem; }
-            .avatar-container { width: 65px; height: 65px; }
-            .avatar-bg { font-size: 2.6rem; }
-            .dialogue-text { font-size: 0.95rem; }
-            .dialogue-section { padding: 12px 15px; gap: 12px; }
         }
     </style>
 </head>
@@ -609,8 +577,9 @@
 
 <div class="app">
     <header>
+        <!-- RESPALDO INTEGRADO: ESCUDO ACADÉMICO INMUNE A CAÍDAS -->
         <div class="institution-header">
-            <img src="https://www.ucv.edu.pe/wp-content/uploads/2024/02/Logo-UCV-izq-1.png" alt="Logo UCV" class="logo-ucv" id="logoUcv">
+            <div class="logo-placeholder-emoji">🏛️</div>
             <div class="institution-text">
                 <h2>UNIVERSIDAD CÉSAR VALLEJO</h2>
                 <p>Escuela de Educación Primaria</p>
@@ -631,7 +600,6 @@
 
             <div class="plant-container" id="plantContainer">
                 <span class="plant-label-tag" id="plantLabel">¡Elige una semilla!</span>
-                <img src="" alt="Etapa Planta" class="plant-img" id="plantStageImg" referrerPolicy="no-referrer">
                 <div class="plant-emoji" id="plantStageEmoji">❓</div>
             </div>
 
@@ -716,17 +684,9 @@
         maiz: {
             name: "Semilla de maíz",
             growthDays: [0, 6, 20, 60, 95, 135],
-            emojis: ['🕳️', '🌱', '🌿', '🌾', '🌽', '🍂'],
-            scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
-            positions: ["15%", "22%", "30%", "30%", "30%", "30%"],
-            images: [
-                "https://lh3.googleusercontent.com/d/1Y6njDONPmHmLP2ZB4LF7vb_-06dBtMUx",
-                "https://lh3.googleusercontent.com/d/14DVVaS6JvpeudgbNjdqR2DOKk1j8Pbhu",
-                "https://lh3.googleusercontent.com/d/1IW13g1r8eLkcxRcfu2z8Uzrxwi9gpPt_",
-                "https://lh3.googleusercontent.com/d/1xJBTalWmLVPip0WacG0CIdUFmVGjrhJ2",
-                "https://lh3.googleusercontent.com/d/1OG_rKXeBQ7L3XGLYggqQao3mKcIcwB_Y",
-                "https://lh3.googleusercontent.com/d/1mPs7hX1VswUMfKQoEYhJKmVG7iO1Tl_S"
-            ],
+            emojis: ['🟤', '🌱', '🌿', '🌾', '🌽', '🍂'],
+            scales: [0.9, 1.0, 1.2, 1.4, 1.6, 1.5],
+            positions: ["15%", "22%", "30%", "32%", "32%", "32%"],
             descriptions: [
                 "Día 0: Grano de maíz durmiendo bajo tierra húmeda.",
                 "Día 6: ¡Germinación! Emerge un brote verde buscando el cielo.",
@@ -747,17 +707,9 @@
         girasol: {
             name: "Semilla de girasol",
             growthDays: [0, 5, 18, 45, 70, 100],
-            emojis: ['🌻', '🌱', '🌿', '🪴', '🌻', '🥀'],
-            scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
-            positions: ["15%", "22%", "30%", "30%", "30%", "30%"],
-            images: [
-                "https://lh3.googleusercontent.com/d/1bGrs6xFj6HwcyTEImQ5wblKLwhSSX_tq",
-                "https://lh3.googleusercontent.com/d/1szLnrEFdTMp95o3eHkhHTPS9ysGqpUWK",
-                "https://lh3.googleusercontent.com/d/1jUaezlsEfRzrP5j4WyXH-53v0xfqBn3-",
-                "https://lh3.googleusercontent.com/d/1Wrw27BfVqhtAzgyj0BnpLkDWgOT-TInt",
-                "https://lh3.googleusercontent.com/d/1vy15bUXEpfXmSPpY299RcV6UtkehRgGd",
-                "https://lh3.googleusercontent.com/d/1mzI4nnhg1NSBSnq9KNjHyf1jSMSaqfIf"
-            ],
+            emojis: ['🟤', '🌱', '🌿', '🪴', '🌻', '🥀'],
+            scales: [0.9, 1.0, 1.2, 1.4, 1.6, 1.5],
+            positions: ["15%", "22%", "30%", "32%", "32%", "32%"],
             descriptions: [
                 "Día 0: Semilla de girasol oculta esperando el agua de la vida.",
                 "Día 5: ¡Brote inicial! La cáscara se rompe y sale la raíz.",
@@ -782,7 +734,6 @@
         potDropzone: document.getElementById('potDropzone'),
         plantContainer: document.getElementById('plantContainer'),
         plantLabel: document.getElementById('plantLabel'),
-        plantStageImg: document.getElementById('plantStageImg'),
         plantStageEmoji: document.getElementById('plantStageEmoji'),
         toolWater: document.getElementById('toolWater'),
         toolSun: document.getElementById('toolSun'),
@@ -807,7 +758,7 @@
 
     let dragData = null;
 
-    // MOTOR DE AUDIO (VOZ DE DON JACINTO)
+    // REPRODUCTOR DE VOZ HABLADA
     function speak(text) {
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
@@ -837,9 +788,8 @@
 
     el.audioBtn.addEventListener('click', () => speak(el.dialogueText.textContent));
 
-    // MOTOR HÍBRIDO (MÓVIL Y COMPUTADORA INTEGRADOS)
+    // SOPORTE HÍBRIDO MOUSE + TOUCH
     el.seedCards.forEach(card => {
-        // 1. DRAG NATIVE (Para mouse de Computadora)
         card.addEventListener('dragstart', (e) => {
             if (state.plantActive) { e.preventDefault(); return; }
             dragData = card.dataset.seed;
@@ -849,7 +799,6 @@
             e.dataTransfer.setData('text/plain', dragData);
         });
 
-        // 2. SELECCIÓN TACTIL / CLIC (Para celulares o clics directos)
         card.addEventListener('click', () => {
             if (state.plantActive) {
                 setDialogue("¡Ya hay una planta creciendo! Presiona reiniciar abajo si deseas cambiar de semilla.");
@@ -867,7 +816,6 @@
         });
     });
 
-    // EVENTOS DEL DESTINO (MACETA)
     el.potDropzone.addEventListener('dragover', (e) => { 
         e.preventDefault(); 
         if(!state.plantActive) el.potDropzone.classList.add('dragover'); 
@@ -910,7 +858,6 @@
         setDialogue(`¡Excelente! Semilla colocada en la tierra fértil. Ahora bríndale Agua y Luz Solar de forma balanceada con las herramientas.`);
     }
 
-    // ACTUALIZACIONES VISUALES Y SISTEMA ANTI-CAÍDAS INTERNET (PUNTO 2)
     function updateVisuals() {
         const config = PLANT_DATA[state.selectedSeed];
         el.progressDays.textContent = `Días transcurridos: ${config.growthDays[state.stage]}`;
@@ -923,22 +870,13 @@
 
         el.plantContainer.style.bottom = config.positions[state.stage];
         const currentScale = config.scales[state.stage];
-        el.plantStageImg.style.transform = `scale(${currentScale})`;
+        
+        // Renderizado nativo ultraseguro usando el array de emojis estilizados
         el.plantStageEmoji.style.transform = `scale(${currentScale})`;
-
-        el.plantStageImg.style.display = 'block';
-        el.plantStageEmoji.style.display = 'none';
-        el.plantStageImg.src = config.images[state.stage];
-
-        // RESPALDO BIOLÓGICO: Si la imagen falla por mala señal, activa el emoticón al instante
-        el.plantStageImg.onerror = () => {
-            el.plantStageImg.style.display = 'none';
-            el.plantStageEmoji.style.display = 'block';
-            el.plantStageEmoji.textContent = config.emojis[state.stage];
-        };
+        el.plantStageEmoji.textContent = config.emojis[state.stage];
     }
 
-    // HERRAMIENTA AGUA (MÁXIMO 2 ACCIONES NORMALES)
+    // HERRAMIENTA AGUA
     el.toolWater.addEventListener('click', () => {
         state.waterCount++;
         createWaterParticles();
@@ -951,12 +889,12 @@
         } else if (state.waterCount >= 3) {
             el.toolWater.disabled = true;
             el.toolWater.classList.remove('active-water');
-            setDialogue("¡Espera! Demasiada agua acumulada ahogará las raíces por falta de oxígeno y la planta morirá. Dejemos que crezca antes de regar más.");
+            setDialogue("¡Espera! Demasiada agua acumulada ahogará las raíces. Necesitamos Luz Solar para equilibrar y poder Dejar Crecer.");
         }
         checkNutrients();
     });
 
-    // HERRAMIENTA SOL (MÁXIMO 2 ACCIONES NORMALES)
+    // HERRAMIENTA SOL
     el.toolSun.addEventListener('click', () => {
         state.sunCount++;
         createSunSparkles();
@@ -969,18 +907,19 @@
         } else if (state.sunCount >= 3) {
             el.toolSun.disabled = true;
             el.toolSun.classList.remove('active-sun');
-            setDialogue("¡Cuidado, calor excesivo! Demasiado sol directo evaporará toda su agua interna y marchitará sus hojas. Esperemos a que avance el tiempo.");
+            setDialogue("¡Cuidado, calor excesivo! Mucho sol marchitará sus hojas. Esperemos a avanzar el tiempo.");
         }
         checkNutrients();
     });
 
+    // CONTROL DE COMPENSACIÓN NUTRICIONAL
     function checkNutrients() {
-        if (state.waterCount > 0 && state.sunCount > 0 && state.waterCount < 3 && state.sunCount < 3) {
+        if (state.waterCount > 0 && state.sunCount > 0) {
             el.toolClock.disabled = false;
         }
     }
 
-    // RELOJ DEL TIEMPO (REHABILITA LOS BOTONES EN LA NUEVA ETAPA)
+    // RELOJ DEL TIEMPO
     el.toolClock.addEventListener('click', () => {
         if (state.stage < 5) {
             state.stage++;
@@ -1039,7 +978,7 @@
         }
     }
 
-    // BOTÓN REINICIAR EXPERIMENTO
+    // REINICIAR
     el.btnReset.addEventListener('click', () => {
         state.plantActive = false;
         state.stage = 0;
@@ -1057,10 +996,7 @@
 
         el.progressDays.textContent = "Día: 0";
         el.plantLabel.textContent = "¡Elige una semilla!";
-        el.plantStageImg.style.display = 'none';
-        el.plantStageEmoji.style.display = 'block';
         el.plantStageEmoji.textContent = '❓';
-        el.plantStageImg.style.transform = 'scale(1)';
         el.plantStageEmoji.style.transform = 'scale(1)';
         el.plantContainer.style.bottom = '42%';
 
@@ -1080,8 +1016,6 @@
     function init() {
         el.toolWater.disabled = true; el.toolSun.disabled = true;
         el.toolClock.disabled = true; el.toolLupa.disabled = true;
-        el.plantStageImg.style.display = 'none';
-        el.plantStageEmoji.style.display = 'block';
         el.plantStageEmoji.textContent = '❓';
         el.potDropzone.classList.add('waiting-touch');
     }
