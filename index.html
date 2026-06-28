@@ -22,6 +22,7 @@
             justify-content: center;
             align-items: center;
             padding: 10px;
+            padding-top: 25px; /* Margen superior para evitar cortes en Google Sites */
             touch-action: manipulation;
             overflow-x: hidden;
         }
@@ -353,6 +354,18 @@
         .tool-btn.active-sun { border-color: #FFC107; background: #FFFDE7; color: #F57F17; }
         .tool-btn.active-clock { border-color: #4CAF50; background: #E8F5E9; color: #2E7D32; }
         .tool-btn.active-lupa { border-color: #9C27B0; background: #F3E5F5; color: #7B1FA2; }
+        
+        /* NUEVO ESTILO PARA EL BOTÓN REINICIAR (INTEGRADO EN HERRAMIENTAS) */
+        .tool-btn.btn-reset {
+            border-color: #E11D48;
+            background: #FFE4E6;
+            color: #BE123C;
+            grid-column: span 2; /* Ocupa todo el ancho abajo */
+            margin-top: 5px;
+        }
+        .tool-btn.btn-reset:hover {
+            background: #FECDD3;
+        }
 
         /* Marcador de Progreso */
         .progress-box {
@@ -487,35 +500,16 @@
             line-height: 1.45;
         }
 
-        .btn-reset {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid #FFF;
-            color: #FFF;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-reset:hover { background: #FFF; color: #D97706; }
-        .hidden { display: none !important; }
-
-        /* =========================================================
-           ===== SOLUCIÓN DE ADAPTACIÓN RESPONSIVA PARA MÓVILES =====
-           ========================================================= */
+        /* RESPONSIVO MÓVIL */
         @media (max-width: 850px) {
             .main-content {
                 grid-template-columns: 1fr;
                 grid-template-rows: auto auto;
-                height: auto; /* Permite que el bloque crezca de forma natural hacia abajo */
+                height: auto;
             }
             
             .canvas-section {
-                height: 380px; /* Evita que el cielo ocupe toda la pantalla del teléfono */
+                height: 380px;
             }
 
             .control-section {
@@ -544,8 +538,7 @@
 <div class="app">
     <header>
         <h1>🌱 Laboratorio del Ciclo de Vida</h1>
-        <p>¡Investiga el ciclo biológico completo (Nacer, Crecer, Reproducirse y Morir) con Don Jacinto!</p>
-        <button class="btn-reset" id="btnReset">🔄 Reiniciar</button>
+        <p>¡Investiga el ciclo biológico completo con Don Jacinto!</p>
     </header>
 
     <div class="main-content">
@@ -602,6 +595,11 @@
                         <span class="icon">🔍</span>
                         <span>Investigar</span>
                     </button>
+                    <!-- BOTÓN REINICIAR UBICADO AQUÍ ABAJO DE FORMA ADAPTABLE -->
+                    <button class="tool-btn btn-reset" id="btnReset">
+                        <span class="icon">🔄</span>
+                        <span>Reiniciar Experimento</span>
+                    </button>
                 </div>
             </div>
 
@@ -637,11 +635,9 @@
     const PLANT_DATA = {
         maiz: {
             name: "Semilla de maíz",
-            // NUEVO ARRAY DE TIEMPO REAL ACTUALIZADO
             growthDays: [0, 6, 20, 60, 95, 135],
             emojis: ['🕳️', '🌱', '🌿', '🌾', '🌽', '🍂'],
             scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
-            // MAPA DE POSICIONES CALIBRADO PARA PROFUNDIDAD REALISTA
             positions: ["15%", "22%", "30%", "30%", "30%", "30%"],
             images: [
                 "https://lh3.googleusercontent.com/d/1Y6njDONPmHmLP2ZB4LF7vb_-06dBtMUx",
@@ -670,7 +666,6 @@
         },
         girasol: {
             name: "Semilla de girasol",
-            // NUEVO ARRAY DE TIEMPO REAL ACTUALIZADO
             growthDays: [0, 5, 18, 45, 70, 100],
             emojis: ['🌻', '🌱', '🌿', '🪴', '🌻', '🥀'],
             scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
@@ -725,25 +720,45 @@
         selectedSeed: 'maiz',
         plantActive: false,
         stage: 0,
-        watered: false,
-        sunny: false,
+        waterCount: 0, // Contador de riegos en la etapa actual
+        sunCount: 0,   // Contador de sol en la etapa actual
         isSpeaking: false
     };
 
     let dragData = null;
 
+    // MOTOR DE AUDIO REFORZADO PARA ENCONTRAR VOZ MASCULINA (DON JACINTO)
     function speak(text) {
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'es-PE';
+        
         const voices = window.speechSynthesis.getVoices();
-        const localVoice = voices.find(v => v.lang.includes('PE') || v.lang.includes('ES'));
-        if (localVoice) utterance.voice = localVoice;
+        
+        // Filtramos buscando activamente voces masculinas o de Google nativas en español
+        let maleVoice = voices.find(v => (v.lang.includes('es') || v.lang.includes('ES')) && 
+            (v.name.toLowerCase().includes('male') || 
+             v.name.toLowerCase().includes('google') || 
+             v.name.toLowerCase().includes('david') || 
+             v.name.toLowerCase().includes('jorge') ||
+             v.name.toLowerCase().includes('natural')));
+             
+        // Si no detecta explícitamente palabras clave, toma cualquier alternativa en español
+        if (!maleVoice) {
+            maleVoice = voices.find(v => v.lang.includes('PE') || v.lang.includes('ES'));
+        }
+
+        if (maleVoice) utterance.voice = maleVoice;
 
         utterance.onstart = () => { state.isSpeaking = true; el.audioBtn.classList.add('speaking'); };
         utterance.onend = () => { state.isSpeaking = false; el.audioBtn.classList.remove('speaking'); };
         window.speechSynthesis.speak(utterance);
+    }
+
+    // Asegura la recarga de voces en navegadores basados en Chromium/Android
+    if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = () => { if(!state.isSpeaking) {}; };
     }
 
     function setDialogue(text) {
@@ -790,7 +805,7 @@
     el.seedCards.forEach(card => {
         card.addEventListener('click', () => {
             if (state.plantActive) {
-                setDialogue("¡Ya hay una planta creciendo! Presiona reiniciar si deseas experimentar con otra semilla.");
+                setDialogue("¡Ya hay una planta creciendo! Presiona el botón de reiniciar abajo si deseas experimentar con otra semilla.");
                 return;
             }
             state.selectedSeed = card.dataset.seed;
@@ -799,7 +814,7 @@
             
             const config = PLANT_DATA[state.selectedSeed];
             el.plantLabel.textContent = config.name;
-            setDialogue(`Has elegido la ${config.name}. Arrástrala a la tierra húmeda para sembrarla.`);
+            setDialogue(`Has elegido la ${config.name}. Arrástrala a la tierra para sembrarla.`);
         });
     });
 
@@ -807,8 +822,8 @@
         state.selectedSeed = seedType;
         state.plantActive = true;
         state.stage = 0;
-        state.watered = false;
-        state.sunny = false;
+        state.waterCount = 0;
+        state.sunCount = 0;
 
         el.seedCards.forEach(c => { if(c.dataset.seed !== seedType) c.style.opacity = '0.3'; });
         el.potDropzone.classList.add('hidden');
@@ -819,7 +834,7 @@
         el.toolLupa.disabled = false;
 
         updateVisuals();
-        setDialogue(`¡Semilla plantada bajo tierra! Ahora necesita elementos de la naturaleza para brotar. Dale Agua y Luz Solar.`);
+        setDialogue(`¡Semilla plantada! Ahora necesita elementos de la naturaleza. Dale Agua y Luz Solar usando las herramientas.`);
     }
 
     function updateVisuals() {
@@ -832,10 +847,7 @@
             if (idx <= state.stage) step.classList.add('active');
         });
 
-        // Aplicamos la posición 'bottom' calibrada para esta etapa específica
         el.plantContainer.style.bottom = config.positions[state.stage];
-
-        // Aplicamos el tamaño progresivo según la etapa actual
         const currentScale = config.scales[state.stage];
         el.plantStageImg.style.transform = `scale(${currentScale})`;
         el.plantStageEmoji.style.transform = `scale(${currentScale})`;
@@ -851,32 +863,56 @@
         };
     }
 
+    // CONTROL DE REGADO CON LÍMITE BIOLÓGICO (MÁXIMO 2)
     el.toolWater.addEventListener('click', () => {
-        state.watered = true;
-        el.toolWater.classList.add('active-water');
+        state.waterCount++;
         createWaterParticles();
+
+        if (state.waterCount === 1) {
+            el.toolWater.classList.add('active-water');
+            setDialogue("¡Muy bien! El agua humedece la tierra ayudando a disolver los nutrientes.");
+        } else if (state.waterCount === 2) {
+            setDialogue("La tierra tiene abundante agua ahora. Asegúrate de darle sol también.");
+        } else if (state.waterCount >= 3) {
+            el.toolWater.disabled = true;
+            el.toolWater.classList.remove('active-water');
+            setDialogue("¡Cuidado, investigador! La planta está recibiendo demasiada agua y sus raíces podrían ahogarse o pudrirse. Esperemos a que crezca antes de regar más.");
+        }
         checkNutrients();
     });
 
+    // CONTROL DE SOL CON LÍMITE BIOLÓGICO (MÁXIMO 2)
     el.toolSun.addEventListener('click', () => {
-        state.sunny = true;
-        el.toolSun.classList.add('active-sun');
+        state.sunCount++;
         createSunSparkles();
+
+        if (state.sunCount === 1) {
+            el.toolSun.classList.add('active-sun');
+            setDialogue("¡Excelente! La luz del sol le da la temperatura ideal a nuestra planta.");
+        } else if (state.sunCount === 2) {
+            setDialogue("Hay suficiente energía solar acumulada por este momento.");
+        } else if (state.sunCount >= 3) {
+            el.toolSun.disabled = true;
+            el.toolSun.classList.remove('active-sun');
+            setDialogue("¡Peligro! Demasiado calor continuo podría secar y marchitar las hojitas de la planta. Deja que pase el tiempo para que use esta energía.");
+        }
         checkNutrients();
     });
 
     function checkNutrients() {
-        if (state.watered && state.sunny) {
+        // Se habilita el reloj si al menos tiene un estímulo de cada uno y ninguno está en peligro crítico (3)
+        if (state.waterCount > 0 && state.sunCount > 0 && state.waterCount < 3 && state.sunCount < 3) {
             el.toolClock.disabled = false;
-            setDialogue("¡Excelente! Las condiciones ambientales son perfectas. Presiona el reloj (⏳ Dejar Crecer) para avanzar en el tiempo.");
         }
     }
 
     el.toolClock.addEventListener('click', () => {
         if (state.stage < 5) {
             state.stage++;
-            state.watered = false;
-            state.sunny = false;
+            
+            // REINICIAMOS CONTADORES Y BOTONES PARA LA NUEVA ETAPA
+            state.waterCount = 0;
+            state.sunCount = 0;
 
             el.toolWater.classList.remove('active-water');
             el.toolSun.classList.remove('active-sun');
@@ -886,11 +922,13 @@
             const config = PLANT_DATA[state.selectedSeed];
             
             if (state.stage === 5) {
-                setDialogue(`¡Llegamos a la etapa final! ${config.descriptions[state.stage]} Usa la Lupa para investigar este importante proceso.`);
+                setDialogue(`¡Llegamos al fin del ciclo! ${config.descriptions[state.stage]} Investiga los detalles con la Lupa.`);
                 el.toolWater.disabled = true;
                 el.toolSun.disabled = true;
             } else {
-                setDialogue(`¡Mira cómo creció! ${config.descriptions[state.stage]} Vuelve a darle agua y sol para que siga su curso.`);
+                el.toolWater.disabled = false;
+                el.toolSun.disabled = false;
+                setDialogue(`¡El tiempo pasó! ${config.descriptions[state.stage]} Vuelve a equilibrar su agua y luz para la nueva etapa.`);
             }
         }
     });
@@ -930,8 +968,8 @@
     el.btnReset.addEventListener('click', () => {
         state.plantActive = false;
         state.stage = 0;
-        state.watered = false;
-        state.sunny = false;
+        state.waterCount = 0;
+        state.sunCount = 0;
 
         el.seedCards.forEach(c => c.style.opacity = '1');
         el.potDropzone.classList.remove('hidden');
@@ -956,7 +994,7 @@
         });
 
         el.effectsContainer.innerHTML = '';
-        setDialogue('¡Laboratorio reiniciado! Selecciona una nueva semilla arriba para volver a investigar con Don Jacinto.');
+        setDialogue('¡Laboratorio reiniciado! Elige una semilla arriba para volver a empezar el ciclo con Don Jacinto.');
     });
 
     function init() {
