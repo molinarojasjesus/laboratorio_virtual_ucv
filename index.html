@@ -40,7 +40,6 @@
             border: 4px solid #FFF;
         }
 
-        /* HEADER INSTITUCIONAL */
         header {
             background: linear-gradient(90deg, #1E3A8A, #3B82F6);
             color: #FFF;
@@ -59,17 +58,24 @@
             padding-bottom: 10px;
         }
 
-        .logo-placeholder-emoji {
-            font-size: 2.2rem;
+        .logo-ucv-container {
+            width: 60px;
+            height: 60px;
             background: white;
-            width: 50px;
-            height: 50px;
+            border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            border-radius: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            padding: 4px;
+            overflow: hidden;
             flex-shrink: 0;
+        }
+
+        .logo-ucv-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
 
         .institution-text {
@@ -108,14 +114,12 @@
             font-weight: 500;
         }
 
-        /* MAIN LAYOUT */
         .main-content {
             display: grid;
             grid-template-columns: 1fr 340px;
             height: 550px;
         }
 
-        /* SIMULATOR CANVAS */
         .canvas-section {
             position: relative;
             background: linear-gradient(180deg, #BAE6FD 0%, #E0F2FE 55%, #78350F 55%, #451a03 100%);
@@ -245,17 +249,14 @@
             transition: bottom 0.5s ease-in-out; 
         }
 
-        .plant-emoji {
-            font-size: 7rem;
-            animation: growIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: block;
+        .plant-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15));
+            display: none;
             transform-origin: bottom center;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-        }
-
-        @keyframes growIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
         }
 
         .plant-label-tag {
@@ -304,7 +305,6 @@
             100% { transform: translate(var(--mx), var(--my)) scale(1.3); opacity: 0; }
         }
 
-        /* CONTROLES E HISTORIAL */
         .control-section {
             background: #FFF;
             display: flex;
@@ -364,7 +364,6 @@
             transition: transform 0.2s;
             pointer-events: none;
         }
-        .seed-card:hover .seed-icon { transform: scale(1.15) rotate(5deg); }
 
         .seed-name {
             font-size: 0.85rem;
@@ -417,9 +416,7 @@
             grid-column: span 2;
             margin-top: 5px;
         }
-        .tool-btn.btn-reset:hover { background: #FECDD3; }
 
-        /* Marcador de Progreso */
         .progress-box {
             background: #F8FAFC;
             border: 2px solid #E2E8F0;
@@ -467,7 +464,6 @@
             box-shadow: 0 0 8px #4CAF50;
         }
 
-        /* DIÁLOGOS */
         .dialogue-section {
             background: #FFF7ED;
             border-top: 3px solid #FFEDD5;
@@ -513,15 +509,8 @@
             font-size: 0.75rem;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
         }
-        .audio-wave:hover { transform: scale(1.15); }
-        .audio-wave.speaking { animation: bounce 0.5s infinite alternate; background: #E91E63; }
-
-        @keyframes bounce {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.25); }
-        }
+        .audio-wave.speaking { background: #E91E63; }
 
         .dialogue-bubble {
             background: #FFF;
@@ -530,7 +519,6 @@
             padding: 12px 20px;
             flex-grow: 1;
             position: relative;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
         .dialogue-bubble::before {
             content: '';
@@ -552,24 +540,10 @@
             line-height: 1.45;
         }
 
-        /* RESPONSIVO MÓVIL */
         @media (max-width: 850px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto;
-                height: auto;
-            }
+            .main-content { grid-template-columns: 1fr; grid-template-rows: auto auto; height: auto; }
             .canvas-section { height: 380px; }
             .control-section { border-left: none; border-top: 2px solid #E2E8F0; padding: 15px; }
-        }
-
-        @media (max-width: 520px) {
-            .institution-header { gap: 10px; }
-            .logo-placeholder-emoji { width: 40px; height: 40px; font-size: 1.7rem; }
-            .institution-text h2 { font-size: 0.95rem; }
-            .institution-text p { font-size: 0.75rem; }
-            .game-title-container h1 { font-size: 1.3rem; }
-            .game-title-container p { font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -577,9 +551,10 @@
 
 <div class="app">
     <header>
-        <!-- RESPALDO INTEGRADO: ESCUDO ACADÉMICO INMUNE A CAÍDAS -->
         <div class="institution-header">
-            <div class="logo-placeholder-emoji">🏛️</div>
+            <div class="logo-ucv-container">
+                <img src="logo-ucv.png" alt="Logo UCV" id="logoUcv">
+            </div>
             <div class="institution-text">
                 <h2>UNIVERSIDAD CÉSAR VALLEJO</h2>
                 <p>Escuela de Educación Primaria</p>
@@ -600,7 +575,7 @@
 
             <div class="plant-container" id="plantContainer">
                 <span class="plant-label-tag" id="plantLabel">¡Elige una semilla!</span>
-                <div class="plant-emoji" id="plantStageEmoji">❓</div>
+                <img src="" alt="Etapa Planta" class="plant-img" id="plantStageImg">
             </div>
 
             <div class="garden-zone">
@@ -684,9 +659,9 @@
         maiz: {
             name: "Semilla de maíz",
             growthDays: [0, 6, 20, 60, 95, 135],
-            emojis: ['🟤', '🌱', '🌿', '🌾', '🌽', '🍂'],
-            scales: [0.9, 1.0, 1.2, 1.4, 1.6, 1.5],
-            positions: ["15%", "22%", "30%", "32%", "32%", "32%"],
+            scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
+            positions: ["15%", "22%", "30%", "30%", "30%", "30%"],
+            images: ["maiz0.png", "maiz1.png", "maiz2.png", "maiz3.png", "maiz4.png", "maiz5.png"],
             descriptions: [
                 "Día 0: Grano de maíz durmiendo bajo tierra húmeda.",
                 "Día 6: ¡Germinación! Emerge un brote verde buscando el cielo.",
@@ -707,9 +682,9 @@
         girasol: {
             name: "Semilla de girasol",
             growthDays: [0, 5, 18, 45, 70, 100],
-            emojis: ['🟤', '🌱', '🌿', '🪴', '🌻', '🥀'],
-            scales: [0.9, 1.0, 1.2, 1.4, 1.6, 1.5],
-            positions: ["15%", "22%", "30%", "32%", "32%", "32%"],
+            scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
+            positions: ["15%", "22%", "30%", "30%", "30%", "30%"],
+            images: ["girasol0.png", "girasol1.png", "girasol2.png", "girasol3.png", "girasol4.png", "girasol5.png"],
             descriptions: [
                 "Día 0: Semilla de girasol oculta esperando el agua de la vida.",
                 "Día 5: ¡Brote inicial! La cáscara se rompe y sale la raíz.",
@@ -734,7 +709,7 @@
         potDropzone: document.getElementById('potDropzone'),
         plantContainer: document.getElementById('plantContainer'),
         plantLabel: document.getElementById('plantLabel'),
-        plantStageEmoji: document.getElementById('plantStageEmoji'),
+        plantStageImg: document.getElementById('plantStageImg'),
         toolWater: document.getElementById('toolWater'),
         toolSun: document.getElementById('toolSun'),
         toolClock: document.getElementById('toolClock'),
@@ -747,37 +722,14 @@
         effectsContainer: document.getElementById('effectsContainer')
     };
 
-    let state = {
-        selectedSeed: 'maiz',
-        plantActive: false,
-        stage: 0,
-        waterCount: 0,
-        sunCount: 0,
-        isSpeaking: false
-    };
-
+    let state = { selectedSeed: 'maiz', plantActive: false, stage: 0, waterCount: 0, sunCount: 0 };
     let dragData = null;
 
-    // REPRODUCTOR DE VOZ HABLADA
     function speak(text) {
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'es-PE';
-        
-        const voices = window.speechSynthesis.getVoices();
-        let maleVoice = voices.find(v => (v.lang.includes('es') || v.lang.includes('ES')) && 
-            (v.name.toLowerCase().includes('male') || 
-             v.name.toLowerCase().includes('google') || 
-             v.name.toLowerCase().includes('david') || 
-             v.name.toLowerCase().includes('jorge') ||
-             v.name.toLowerCase().includes('natural')));
-             
-        if (!maleVoice) maleVoice = voices.find(v => v.lang.includes('PE') || v.lang.includes('ES'));
-        if (maleVoice) utterance.voice = maleVoice;
-
-        utterance.onstart = () => { state.isSpeaking = true; el.audioBtn.classList.add('speaking'); };
-        utterance.onend = () => { state.isSpeaking = false; el.audioBtn.classList.remove('speaking'); };
         window.speechSynthesis.speak(utterance);
     }
 
@@ -788,7 +740,6 @@
 
     el.audioBtn.addEventListener('click', () => speak(el.dialogueText.textContent));
 
-    // SOPORTE HÍBRIDO MOUSE + TOUCH
     el.seedCards.forEach(card => {
         card.addEventListener('dragstart', (e) => {
             if (state.plantActive) { e.preventDefault(); return; }
@@ -801,226 +752,105 @@
 
         card.addEventListener('click', () => {
             if (state.plantActive) {
-                setDialogue("¡Ya hay una planta creciendo! Presiona reiniciar abajo si deseas cambiar de semilla.");
+                setDialogue("¡Ya hay una planta creciendo! Presiona reiniciar abajo.");
                 return;
             }
             state.selectedSeed = card.dataset.seed;
             dragData = state.selectedSeed;
             el.seedCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
-            
             el.potDropzone.classList.add('waiting-touch');
-            const config = PLANT_DATA[state.selectedSeed];
-            el.plantLabel.textContent = config.name;
-            setDialogue(`Has seleccionado la ${config.name}. Arrástrala con el ratón o toca la maceta amarilla parpadeante para sembrarla.`);
+            el.plantLabel.textContent = PLANT_DATA[state.selectedSeed].name;
+            setDialogue(`Seleccionaste ${PLANT_DATA[state.selectedSeed].name}. Toca la maceta amarilla para sembrarla.`);
         });
     });
 
-    el.potDropzone.addEventListener('dragover', (e) => { 
-        e.preventDefault(); 
-        if(!state.plantActive) el.potDropzone.classList.add('dragover'); 
-    });
-    
+    el.potDropzone.addEventListener('dragover', (e) => { e.preventDefault(); if(!state.plantActive) el.potDropzone.classList.add('dragover'); });
     el.potDropzone.addEventListener('dragleave', () => el.potDropzone.classList.remove('dragover'));
-    
-    el.potDropzone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        el.potDropzone.classList.remove('dragover');
-        if (!state.plantActive && state.selectedSeed) {
-            plantSeed(state.selectedSeed);
-        }
-    });
-
-    el.potDropzone.addEventListener('click', () => {
-        if (!state.plantActive && state.selectedSeed) {
-            plantSeed(state.selectedSeed);
-        }
-    });
+    el.potDropzone.addEventListener('drop', (e) => { e.preventDefault(); el.potDropzone.classList.remove('dragover'); if (!state.plantActive && state.selectedSeed) plantSeed(state.selectedSeed); });
+    el.potDropzone.addEventListener('click', () => { if (!state.plantActive && state.selectedSeed) plantSeed(state.selectedSeed); });
 
     function plantSeed(seedType) {
         state.selectedSeed = seedType;
         state.plantActive = true;
-        state.stage = 0;
-        state.waterCount = 0;
-        state.sunCount = 0;
-        dragData = null;
-
+        state.stage = 0; state.waterCount = 0; state.sunCount = 0;
         el.seedCards.forEach(c => { if(c.dataset.seed !== seedType) c.style.opacity = '0.3'; });
         el.potDropzone.classList.remove('waiting-touch');
         el.potDropzone.classList.add('hidden');
-        
-        el.toolWater.disabled = false;
-        el.toolSun.disabled = false;
-        el.toolClock.disabled = true;
-        el.toolLupa.disabled = false;
-
+        el.toolWater.disabled = false; el.toolSun.disabled = false; el.toolClock.disabled = true; el.toolLupa.disabled = false;
         updateVisuals();
-        setDialogue(`¡Excelente! Semilla colocada en la tierra fértil. Ahora bríndale Agua y Luz Solar de forma balanceada con las herramientas.`);
+        setDialogue("¡Semilla colocada! Dale Agua y Luz Solar de forma balanceada.");
     }
 
     function updateVisuals() {
         const config = PLANT_DATA[state.selectedSeed];
         el.progressDays.textContent = `Días transcurridos: ${config.growthDays[state.stage]}`;
         el.plantLabel.textContent = `${config.name} - Etapa ${state.stage}`;
-
-        el.progressSteps.forEach((step, idx) => {
-            step.classList.remove('active');
-            if (idx <= state.stage) step.classList.add('active');
-        });
-
+        el.progressSteps.forEach((step, idx) => { step.classList.remove('active'); if (idx <= state.stage) step.classList.add('active'); });
         el.plantContainer.style.bottom = config.positions[state.stage];
-        const currentScale = config.scales[state.stage];
-        
-        // Renderizado nativo ultraseguro usando el array de emojis estilizados
-        el.plantStageEmoji.style.transform = `scale(${currentScale})`;
-        el.plantStageEmoji.textContent = config.emojis[state.stage];
+        el.plantStageImg.style.transform = `scale(${config.scales[state.stage]})`;
+        el.plantStageImg.src = config.images[state.stage];
+        el.plantStageImg.style.display = 'block';
     }
 
-    // HERRAMIENTA AGUA
     el.toolWater.addEventListener('click', () => {
         state.waterCount++;
         createWaterParticles();
-
-        if (state.waterCount === 1) {
-            el.toolWater.classList.add('active-water');
-            setDialogue("¡Muy bien! El agua disuelve los minerales de la tierra para que la planta se alimente.");
-        } else if (state.waterCount === 2) {
-            setDialogue("Humedad ideal alcanzada. No te olvides de darle energía solar.");
-        } else if (state.waterCount >= 3) {
-            el.toolWater.disabled = true;
-            el.toolWater.classList.remove('active-water');
-            setDialogue("¡Espera! Demasiada agua acumulada ahogará las raíces. Necesitamos Luz Solar para equilibrar y poder Dejar Crecer.");
-        }
-        checkNutrients();
+        if (state.waterCount === 1) { el.toolWater.classList.add('active-water'); setDialogue("¡Muy bien! El agua disuelve los minerales de la tierra."); }
+        else if (state.waterCount >= 3) { el.toolWater.disabled = true; el.toolWater.classList.remove('active-water'); setDialogue("¡Mucha agua! Dale Sol para equilibrar."); }
+        if (state.waterCount > 0 && state.sunCount > 0) el.toolClock.disabled = false;
     });
 
-    // HERRAMIENTA SOL
     el.toolSun.addEventListener('click', () => {
         state.sunCount++;
         createSunSparkles();
-
-        if (state.sunCount === 1) {
-            el.toolSun.classList.add('active-sun');
-            setDialogue("¡Sensacional! La luz del sol calienta la planta y le permite producir su propia energía.");
-        } else if (state.sunCount === 2) {
-            setDialogue("Luz acumulada balanceada por ahora.");
-        } else if (state.sunCount >= 3) {
-            el.toolSun.disabled = true;
-            el.toolSun.classList.remove('active-sun');
-            setDialogue("¡Cuidado, calor excesivo! Mucho sol marchitará sus hojas. Esperemos a avanzar el tiempo.");
-        }
-        checkNutrients();
+        if (state.sunCount === 1) { el.toolSun.classList.add('active-sun'); setDialogue("¡Excelente! La luz solar le da energía."); }
+        else if (state.sunCount >= 3) { el.toolSun.disabled = true; el.toolSun.classList.remove('active-sun'); setDialogue("¡Mucho calor! Esperemos a avanzar el tiempo."); }
+        if (state.waterCount > 0 && state.sunCount > 0) el.toolClock.disabled = false;
     });
 
-    // CONTROL DE COMPENSACIÓN NUTRICIONAL
-    function checkNutrients() {
-        if (state.waterCount > 0 && state.sunCount > 0) {
-            el.toolClock.disabled = false;
-        }
-    }
-
-    // RELOJ DEL TIEMPO
     el.toolClock.addEventListener('click', () => {
         if (state.stage < 5) {
-            state.stage++;
-            
-            state.waterCount = 0;
-            state.sunCount = 0;
-
-            el.toolWater.classList.remove('active-water');
-            el.toolSun.classList.remove('active-sun');
-            el.toolClock.disabled = true;
-
+            state.stage++; state.waterCount = 0; state.sunCount = 0;
+            el.toolWater.classList.remove('active-water'); el.toolSun.classList.remove('active-sun'); el.toolClock.disabled = true;
             updateVisuals();
-            const config = PLANT_DATA[state.selectedSeed];
-            
-            if (state.stage === 5) {
-                setDialogue(`¡Fin del ciclo biológico! ${config.descriptions[state.stage]} Utiliza la Lupa para tu investigación científica.`);
-                el.toolWater.disabled = true;
-                el.toolSun.disabled = true;
-            } else {
-                el.toolWater.disabled = false;
-                el.toolSun.disabled = false;
-                setDialogue(`¡El tiempo avanzó con éxito! ${config.descriptions[state.stage]} Vuelve a balancear sus recursos.`);
-            }
+            if (state.stage === 5) { setDialogue(`¡Fin del ciclo! ${PLANT_DATA[state.selectedSeed].descriptions[state.stage]} Usa la Lupa.`); el.toolWater.disabled = true; el.toolSun.disabled = true; }
+            else { el.toolWater.disabled = false; el.toolSun.disabled = false; setDialogue(PLANT_DATA[state.selectedSeed].descriptions[state.stage]); }
         }
     });
 
-    el.toolLupa.addEventListener('click', () => {
-        const config = PLANT_DATA[state.selectedSeed];
-        setDialogue(config.details[state.stage]);
-    });
+    el.toolLupa.addEventListener('click', () => setDialogue(PLANT_DATA[state.selectedSeed].details[state.stage]));
 
     function createWaterParticles() {
-        for (let i = 0; i < 20; i++) {
-            const part = document.createElement('div');
-            part.className = 'particle';
-            part.textContent = '💧';
-            part.style.left = `${Math.random() * 60 + 20}%`;
-            part.style.top = `${Math.random() * 20}%`;
-            part.style.animationDelay = `${Math.random() * 0.4}s`;
-            el.effectsContainer.appendChild(part);
-            setTimeout(() => part.remove(), 1200);
+        for (let i = 0; i < 15; i++) {
+            const part = document.createElement('div'); part.className = 'particle'; part.textContent = '💧';
+            part.style.left = `${Math.random() * 60 + 20}%`; part.style.top = `${Math.random() * 20}%`;
+            el.effectsContainer.appendChild(part); setTimeout(() => part.remove(), 1000);
         }
     }
 
     function createSunSparkles() {
-        for (let i = 0; i < 15; i++) {
-            const spark = document.createElement('div');
-            spark.className = 'sparkle';
-            spark.textContent = '✨';
-            spark.style.left = `${Math.random() * 50 + 25}%`;
-            spark.style.top = `${Math.random() * 30 + 10}%`;
-            spark.style.setProperty('--mx', `${(Math.random() - 0.5) * 80}px`);
-            spark.style.setProperty('--my', `${(Math.random() - 0.5) * 80}px`);
-            el.effectsContainer.appendChild(spark);
-            setTimeout(() => spark.remove(), 1200);
+        for (let i = 0; i < 10; i++) {
+            const spark = document.createElement('div'); spark.className = 'sparkle'; spark.textContent = '✨';
+            spark.style.left = `${Math.random() * 50 + 25}%`; spark.style.top = `${Math.random() * 30 + 10}%`;
+            spark.style.setProperty('--mx', `${(Math.random() - 0.5) * 60}px`); spark.style.setProperty('--my', `${(Math.random() - 0.5) * 60}px`);
+            el.effectsContainer.appendChild(spark); setTimeout(() => spark.remove(), 1000);
         }
     }
 
-    // REINICIAR
     el.btnReset.addEventListener('click', () => {
-        state.plantActive = false;
-        state.stage = 0;
-        state.waterCount = 0;
-        state.sunCount = 0;
-
-        el.seedCards.forEach(c => c.style.opacity = '1');
-        el.potDropzone.classList.remove('hidden');
-        el.potDropzone.classList.add('waiting-touch');
-        
-        el.toolWater.disabled = true; el.toolSun.disabled = true;
-        el.toolClock.disabled = true; el.toolLupa.disabled = true;
-        el.toolWater.classList.remove('active-water');
-        el.toolSun.classList.remove('active-sun');
-
-        el.progressDays.textContent = "Día: 0";
-        el.plantLabel.textContent = "¡Elige una semilla!";
-        el.plantStageEmoji.textContent = '❓';
-        el.plantStageEmoji.style.transform = 'scale(1)';
-        el.plantContainer.style.bottom = '42%';
-
-        el.progressSteps.forEach((step, idx) => {
-            step.classList.remove('active');
-            if (idx === 0) step.classList.add('active');
-        });
-
-        el.effectsContainer.innerHTML = '';
-        el.seedCards.forEach(c => c.classList.remove('selected'));
-        document.getElementById('seedMaiz').classList.add('selected');
-        state.selectedSeed = 'maiz';
-
-        setDialogue('Laboratorio reiniciado. Arrastra la semilla o toca la maceta para volver a empezar con Don Jacinto.');
+        state.plantActive = false; state.stage = 0; state.waterCount = 0; state.sunCount = 0;
+        el.seedCards.forEach(c => c.style.opacity = '1'); el.potDropzone.classList.remove('hidden'); el.potDropzone.classList.add('waiting-touch');
+        el.toolWater.disabled = true; el.toolSun.disabled = true; el.toolClock.disabled = true; el.toolLupa.disabled = true;
+        el.toolWater.classList.remove('active-water'); el.toolSun.classList.remove('active-sun');
+        el.progressDays.textContent = "Día: 0"; el.plantLabel.textContent = "¡Elige una semilla!";
+        el.plantStageImg.style.display = 'none'; el.plantStageImg.src = '';
+        el.progressSteps.forEach((step, idx) => { step.classList.remove('active'); if (idx === 0) step.classList.add('active'); });
+        el.effectsContainer.innerHTML = ''; state.selectedSeed = 'maiz';
+        setDialogue('Laboratorio reiniciado. Elige una semilla para empezar.');
     });
 
-    function init() {
-        el.toolWater.disabled = true; el.toolSun.disabled = true;
-        el.toolClock.disabled = true; el.toolLupa.disabled = true;
-        el.plantStageEmoji.textContent = '❓';
-        el.potDropzone.classList.add('waiting-touch');
-    }
-
-    window.onload = init;
+    window.onload = () => { el.toolWater.disabled = true; el.toolSun.disabled = true; el.toolClock.disabled = true; el.toolLupa.disabled = true; };
 </script>
 </body>
 </html>
