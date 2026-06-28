@@ -40,29 +40,68 @@
             border: 4px solid #FFF;
         }
 
-        /* HEADER */
+        /* HEADER INSTITUCIONAL MEJORADO */
         header {
-            background: linear-gradient(90deg, #FF9800, #FFC107);
+            background: linear-gradient(90deg, #1E3A8A, #3B82F6);
             color: #FFF;
             padding: 15px 20px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             position: relative;
         }
 
-        header h1 {
-            font-size: 1.8rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        .institution-header {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 10px;
         }
 
-        header p {
-            font-size: 0.95rem;
-            opacity: 0.9;
+        .logo-ucv {
+            width: auto;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            background: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .institution-text {
+            text-align: left;
+        }
+
+        .institution-text h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #FFF;
+        }
+
+        .institution-text p {
+            font-size: 0.85rem;
+            color: #BFDBFE;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .game-title-container {
+            text-align: center;
             margin-top: 5px;
+        }
+
+        .game-title-container h1 {
+            font-size: 1.6rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            color: #FFF;
+        }
+
+        .game-title-container p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            color: #E0F2FE;
             font-weight: 500;
         }
 
@@ -149,9 +188,9 @@
         .dropzone {
             position: absolute;
             top: -10px;
-            width: 140px;
-            height: 55px;
-            background: rgba(255, 235, 59, 0.25);
+            width: 170px;
+            height: 70px;
+            background: rgba(255, 235, 59, 0.2);
             border: 3px dashed #FFEB3B;
             border-radius: 50%;
             z-index: 15;
@@ -159,12 +198,28 @@
             justify-content: center;
             align-items: center;
             color: #FFF;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: bold;
+            text-align: center;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
             transition: all 0.3s ease;
             pointer-events: auto;
+            cursor: pointer;
         }
+        
+        /* EFECTO DE PULSACIÓN DE ESPERA */
+        .dropzone.waiting-touch {
+            animation: pulseTarget 1.2s infinite alternate;
+            background: rgba(76, 175, 80, 0.35);
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px #4CAF50;
+        }
+
+        @keyframes pulseTarget {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
         .dropzone.dragover {
             background: rgba(76, 175, 80, 0.4);
             border-color: #4CAF50;
@@ -293,13 +348,22 @@
             cursor: grab;
             transition: all 0.25s ease;
             position: relative;
-            touch-action: none;
         }
-        .seed-card:active { cursor: grabbing; }
+        .seed-card:active {
+            cursor: grabbing;
+        }
+        
         .seed-card.selected {
-            border-color: #FF9800;
-            background: #FFFDE7;
-            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.15);
+            border-color: #3B82F6;
+            background: #EFF6FF;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+            transform: scale(1.03);
+            animation: pulseBorder 1.5s infinite alternate;
+        }
+
+        @keyframes pulseBorder {
+            0% { border-color: #3B82F6; }
+            100% { border-color: #60A5FA; }
         }
 
         .seed-icon {
@@ -307,6 +371,7 @@
             margin-bottom: 5px;
             display: inline-block;
             transition: transform 0.2s;
+            pointer-events: none; /* Evita interferencias en drag & drop */
         }
         .seed-card:hover .seed-icon {
             transform: scale(1.15) rotate(5deg);
@@ -316,6 +381,7 @@
             font-size: 0.85rem;
             font-weight: bold;
             color: #475569;
+            pointer-events: none;
         }
 
         .tools-grid {
@@ -355,12 +421,11 @@
         .tool-btn.active-clock { border-color: #4CAF50; background: #E8F5E9; color: #2E7D32; }
         .tool-btn.active-lupa { border-color: #9C27B0; background: #F3E5F5; color: #7B1FA2; }
         
-        /* NUEVO ESTILO PARA EL BOTÓN REINICIAR (INTEGRADO EN HERRAMIENTAS) */
         .tool-btn.btn-reset {
             border-color: #E11D48;
             background: #FFE4E6;
             color: #BE123C;
-            grid-column: span 2; /* Ocupa todo el ancho abajo */
+            grid-column: span 2;
             margin-top: 5px;
         }
         .tool-btn.btn-reset:hover {
@@ -500,7 +565,7 @@
             line-height: 1.45;
         }
 
-        /* RESPONSIVO MÓVIL */
+        /* RESPONSIVO MÓVIL GENERAL */
         @media (max-width: 850px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -519,9 +584,16 @@
             }
         }
 
+        @media (max-width: 520px) {
+            .institution-header { gap: 10px; }
+            .logo-ucv { height: 38px; }
+            .institution-text h2 { font-size: 0.95rem; }
+            .institution-text p { font-size: 0.75rem; }
+            .game-title-container h1 { font-size: 1.3rem; }
+            .game-title-container p { font-size: 0.8rem; }
+        }
+
         @media (max-width: 420px) {
-            header h1 { font-size: 1.4rem; }
-            header p { font-size: 0.85rem; }
             .tools-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .seed-selector { gap: 8px; }
             .seed-card { padding: 8px; }
@@ -537,8 +609,17 @@
 
 <div class="app">
     <header>
-        <h1>🌱 Laboratorio del Ciclo de Vida</h1>
-        <p>¡Investiga el ciclo biológico completo con Don Jacinto!</p>
+        <div class="institution-header">
+            <img src="https://www.ucv.edu.pe/wp-content/uploads/2024/02/Logo-UCV-izq-1.png" alt="Logo UCV" class="logo-ucv" id="logoUcv">
+            <div class="institution-text">
+                <h2>UNIVERSIDAD CÉSAR VALLEJO</h2>
+                <p>Escuela de Educación Primaria</p>
+            </div>
+        </div>
+        <div class="game-title-container">
+            <h1>🌱 Laboratorio del Ciclo de Vida</h1>
+            <p>¡Investiga el ciclo biológico completo con Don Jacinto!</p>
+        </div>
     </header>
 
     <div class="main-content">
@@ -556,14 +637,14 @@
 
             <div class="garden-zone">
                 <div class="soil-container">
-                    <div class="dropzone" id="potDropzone">Arrastra aquí la semilla</div>
+                    <div class="dropzone" id="potDropzone">Arrastra o toca aquí para sembrar</div>
                 </div>
             </div>
         </section>
 
         <section class="control-section">
             <div>
-                <h2 class="section-title">📦 1. Elige tu Semilla</h2>
+                <h2 class="section-title">📦 1. Selecciona una Semilla</h2>
                 <div class="seed-selector">
                     <div class="seed-card selected" data-seed="maiz" draggable="true" id="seedMaiz">
                         <span class="seed-icon">🌽</span>
@@ -595,7 +676,6 @@
                         <span class="icon">🔍</span>
                         <span>Investigar</span>
                     </button>
-                    <!-- BOTÓN REINICIAR UBICADO AQUÍ ABAJO DE FORMA ADAPTABLE -->
                     <button class="tool-btn btn-reset" id="btnReset">
                         <span class="icon">🔄</span>
                         <span>Reiniciar Experimento</span>
@@ -626,7 +706,7 @@
             <div class="audio-wave" id="audioBtn" title="Escuchar a Don Jacinto">🔊</div>
         </div>
         <div class="dialogue-bubble">
-            <p class="dialogue-text" id="dialogueText">¡Hola investigador! Soy Don Jacinto. Comencemos seleccionando y arrastrando la semilla de maíz o girasol a la tierra húmeda.</p>
+            <p class="dialogue-text" id="dialogueText">¡Hola investigador! Soy Don Jacinto de la UCV. Arrastra la semilla con el ratón o selecciónala con un toque para colocarla sobre la tierra húmeda.</p>
         </div>
     </footer>
 </div>
@@ -720,14 +800,14 @@
         selectedSeed: 'maiz',
         plantActive: false,
         stage: 0,
-        waterCount: 0, // Contador de riegos en la etapa actual
-        sunCount: 0,   // Contador de sol en la etapa actual
+        waterCount: 0,
+        sunCount: 0,
         isSpeaking: false
     };
 
     let dragData = null;
 
-    // MOTOR DE AUDIO REFORZADO PARA ENCONTRAR VOZ MASCULINA (DON JACINTO)
+    // MOTOR DE AUDIO (VOZ DE DON JACINTO)
     function speak(text) {
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
@@ -735,8 +815,6 @@
         utterance.lang = 'es-PE';
         
         const voices = window.speechSynthesis.getVoices();
-        
-        // Filtramos buscando activamente voces masculinas o de Google nativas en español
         let maleVoice = voices.find(v => (v.lang.includes('es') || v.lang.includes('ES')) && 
             (v.name.toLowerCase().includes('male') || 
              v.name.toLowerCase().includes('google') || 
@@ -744,21 +822,12 @@
              v.name.toLowerCase().includes('jorge') ||
              v.name.toLowerCase().includes('natural')));
              
-        // Si no detecta explícitamente palabras clave, toma cualquier alternativa en español
-        if (!maleVoice) {
-            maleVoice = voices.find(v => v.lang.includes('PE') || v.lang.includes('ES'));
-        }
-
+        if (!maleVoice) maleVoice = voices.find(v => v.lang.includes('PE') || v.lang.includes('ES'));
         if (maleVoice) utterance.voice = maleVoice;
 
         utterance.onstart = () => { state.isSpeaking = true; el.audioBtn.classList.add('speaking'); };
         utterance.onend = () => { state.isSpeaking = false; el.audioBtn.classList.remove('speaking'); };
         window.speechSynthesis.speak(utterance);
-    }
-
-    // Asegura la recarga de voces en navegadores basados en Chromium/Android
-    if (window.speechSynthesis) {
-        window.speechSynthesis.onvoiceschanged = () => { if(!state.isSpeaking) {}; };
     }
 
     function setDialogue(text) {
@@ -768,54 +837,56 @@
 
     el.audioBtn.addEventListener('click', () => speak(el.dialogueText.textContent));
 
-    // DRAG AND DROP LÓGICA
+    // MOTOR HÍBRIDO (MÓVIL Y COMPUTADORA INTEGRADOS)
     el.seedCards.forEach(card => {
+        // 1. DRAG NATIVE (Para mouse de Computadora)
         card.addEventListener('dragstart', (e) => {
-            if(state.plantActive) { e.preventDefault(); return; }
+            if (state.plantActive) { e.preventDefault(); return; }
             dragData = card.dataset.seed;
-            card.classList.add('selected');
-        });
-        card.addEventListener('touchstart', (e) => {
-            if(state.plantActive) return;
-            dragData = card.dataset.seed;
+            state.selectedSeed = dragData;
             el.seedCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
-        }, { passive: true });
-    });
+            e.dataTransfer.setData('text/plain', dragData);
+        });
 
-    el.potDropzone.addEventListener('dragover', (e) => { e.preventDefault(); el.potDropzone.classList.add('dragover'); });
-    el.potDropzone.addEventListener('dragleave', () => el.potDropzone.classList.remove('dragover'));
-    el.potDropzone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        el.potDropzone.classList.remove('dragover');
-        if (dragData) plantSeed(dragData);
-    });
-
-    document.addEventListener('touchend', (e) => {
-        if (!dragData || state.plantActive) return;
-        const touch = e.changedTouches[0];
-        const rect = el.potDropzone.getBoundingClientRect();
-        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
-            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-            plantSeed(dragData);
-        }
-        dragData = null;
-    });
-
-    el.seedCards.forEach(card => {
+        // 2. SELECCIÓN TACTIL / CLIC (Para celulares o clics directos)
         card.addEventListener('click', () => {
             if (state.plantActive) {
-                setDialogue("¡Ya hay una planta creciendo! Presiona el botón de reiniciar abajo si deseas experimentar con otra semilla.");
+                setDialogue("¡Ya hay una planta creciendo! Presiona reiniciar abajo si deseas cambiar de semilla.");
                 return;
             }
             state.selectedSeed = card.dataset.seed;
+            dragData = state.selectedSeed;
             el.seedCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             
+            el.potDropzone.classList.add('waiting-touch');
             const config = PLANT_DATA[state.selectedSeed];
             el.plantLabel.textContent = config.name;
-            setDialogue(`Has elegido la ${config.name}. Arrástrala a la tierra para sembrarla.`);
+            setDialogue(`Has seleccionado la ${config.name}. Arrástrala con el ratón o toca la maceta amarilla parpadeante para sembrarla.`);
         });
+    });
+
+    // EVENTOS DEL DESTINO (MACETA)
+    el.potDropzone.addEventListener('dragover', (e) => { 
+        e.preventDefault(); 
+        if(!state.plantActive) el.potDropzone.classList.add('dragover'); 
+    });
+    
+    el.potDropzone.addEventListener('dragleave', () => el.potDropzone.classList.remove('dragover'));
+    
+    el.potDropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        el.potDropzone.classList.remove('dragover');
+        if (!state.plantActive && state.selectedSeed) {
+            plantSeed(state.selectedSeed);
+        }
+    });
+
+    el.potDropzone.addEventListener('click', () => {
+        if (!state.plantActive && state.selectedSeed) {
+            plantSeed(state.selectedSeed);
+        }
     });
 
     function plantSeed(seedType) {
@@ -824,8 +895,10 @@
         state.stage = 0;
         state.waterCount = 0;
         state.sunCount = 0;
+        dragData = null;
 
         el.seedCards.forEach(c => { if(c.dataset.seed !== seedType) c.style.opacity = '0.3'; });
+        el.potDropzone.classList.remove('waiting-touch');
         el.potDropzone.classList.add('hidden');
         
         el.toolWater.disabled = false;
@@ -834,9 +907,10 @@
         el.toolLupa.disabled = false;
 
         updateVisuals();
-        setDialogue(`¡Semilla plantada! Ahora necesita elementos de la naturaleza. Dale Agua y Luz Solar usando las herramientas.`);
+        setDialogue(`¡Excelente! Semilla colocada en la tierra fértil. Ahora bríndale Agua y Luz Solar de forma balanceada con las herramientas.`);
     }
 
+    // ACTUALIZACIONES VISUALES Y SISTEMA ANTI-CAÍDAS INTERNET (PUNTO 2)
     function updateVisuals() {
         const config = PLANT_DATA[state.selectedSeed];
         el.progressDays.textContent = `Días transcurridos: ${config.growthDays[state.stage]}`;
@@ -856,6 +930,7 @@
         el.plantStageEmoji.style.display = 'none';
         el.plantStageImg.src = config.images[state.stage];
 
+        // RESPALDO BIOLÓGICO: Si la imagen falla por mala señal, activa el emoticón al instante
         el.plantStageImg.onerror = () => {
             el.plantStageImg.style.display = 'none';
             el.plantStageEmoji.style.display = 'block';
@@ -863,54 +938,53 @@
         };
     }
 
-    // CONTROL DE REGADO CON LÍMITE BIOLÓGICO (MÁXIMO 2)
+    // HERRAMIENTA AGUA (MÁXIMO 2 ACCIONES NORMALES)
     el.toolWater.addEventListener('click', () => {
         state.waterCount++;
         createWaterParticles();
 
         if (state.waterCount === 1) {
             el.toolWater.classList.add('active-water');
-            setDialogue("¡Muy bien! El agua humedece la tierra ayudando a disolver los nutrientes.");
+            setDialogue("¡Muy bien! El agua disuelve los minerales de la tierra para que la planta se alimente.");
         } else if (state.waterCount === 2) {
-            setDialogue("La tierra tiene abundante agua ahora. Asegúrate de darle sol también.");
+            setDialogue("Humedad ideal alcanzada. No te olvides de darle energía solar.");
         } else if (state.waterCount >= 3) {
             el.toolWater.disabled = true;
             el.toolWater.classList.remove('active-water');
-            setDialogue("¡Cuidado, investigador! La planta está recibiendo demasiada agua y sus raíces podrían ahogarse o pudrirse. Esperemos a que crezca antes de regar más.");
+            setDialogue("¡Espera! Demasiada agua acumulada ahogará las raíces por falta de oxígeno y la planta morirá. Dejemos que crezca antes de regar más.");
         }
         checkNutrients();
     });
 
-    // CONTROL DE SOL CON LÍMITE BIOLÓGICO (MÁXIMO 2)
+    // HERRAMIENTA SOL (MÁXIMO 2 ACCIONES NORMALES)
     el.toolSun.addEventListener('click', () => {
         state.sunCount++;
         createSunSparkles();
 
         if (state.sunCount === 1) {
             el.toolSun.classList.add('active-sun');
-            setDialogue("¡Excelente! La luz del sol le da la temperatura ideal a nuestra planta.");
+            setDialogue("¡Sensacional! La luz del sol calienta la planta y le permite producir su propia energía.");
         } else if (state.sunCount === 2) {
-            setDialogue("Hay suficiente energía solar acumulada por este momento.");
+            setDialogue("Luz acumulada balanceada por ahora.");
         } else if (state.sunCount >= 3) {
             el.toolSun.disabled = true;
             el.toolSun.classList.remove('active-sun');
-            setDialogue("¡Peligro! Demasiado calor continuo podría secar y marchitar las hojitas de la planta. Deja que pase el tiempo para que use esta energía.");
+            setDialogue("¡Cuidado, calor excesivo! Demasiado sol directo evaporará toda su agua interna y marchitará sus hojas. Esperemos a que avance el tiempo.");
         }
         checkNutrients();
     });
 
     function checkNutrients() {
-        // Se habilita el reloj si al menos tiene un estímulo de cada uno y ninguno está en peligro crítico (3)
         if (state.waterCount > 0 && state.sunCount > 0 && state.waterCount < 3 && state.sunCount < 3) {
             el.toolClock.disabled = false;
         }
     }
 
+    // RELOJ DEL TIEMPO (REHABILITA LOS BOTONES EN LA NUEVA ETAPA)
     el.toolClock.addEventListener('click', () => {
         if (state.stage < 5) {
             state.stage++;
             
-            // REINICIAMOS CONTADORES Y BOTONES PARA LA NUEVA ETAPA
             state.waterCount = 0;
             state.sunCount = 0;
 
@@ -922,13 +996,13 @@
             const config = PLANT_DATA[state.selectedSeed];
             
             if (state.stage === 5) {
-                setDialogue(`¡Llegamos al fin del ciclo! ${config.descriptions[state.stage]} Investiga los detalles con la Lupa.`);
+                setDialogue(`¡Fin del ciclo biológico! ${config.descriptions[state.stage]} Utiliza la Lupa para tu investigación científica.`);
                 el.toolWater.disabled = true;
                 el.toolSun.disabled = true;
             } else {
                 el.toolWater.disabled = false;
                 el.toolSun.disabled = false;
-                setDialogue(`¡El tiempo pasó! ${config.descriptions[state.stage]} Vuelve a equilibrar su agua y luz para la nueva etapa.`);
+                setDialogue(`¡El tiempo avanzó con éxito! ${config.descriptions[state.stage]} Vuelve a balancear sus recursos.`);
             }
         }
     });
@@ -965,6 +1039,7 @@
         }
     }
 
+    // BOTÓN REINICIAR EXPERIMENTO
     el.btnReset.addEventListener('click', () => {
         state.plantActive = false;
         state.stage = 0;
@@ -973,6 +1048,7 @@
 
         el.seedCards.forEach(c => c.style.opacity = '1');
         el.potDropzone.classList.remove('hidden');
+        el.potDropzone.classList.add('waiting-touch');
         
         el.toolWater.disabled = true; el.toolSun.disabled = true;
         el.toolClock.disabled = true; el.toolLupa.disabled = true;
@@ -994,7 +1070,11 @@
         });
 
         el.effectsContainer.innerHTML = '';
-        setDialogue('¡Laboratorio reiniciado! Elige una semilla arriba para volver a empezar el ciclo con Don Jacinto.');
+        el.seedCards.forEach(c => c.classList.remove('selected'));
+        document.getElementById('seedMaiz').classList.add('selected');
+        state.selectedSeed = 'maiz';
+
+        setDialogue('Laboratorio reiniciado. Arrastra la semilla o toca la maceta para volver a empezar con Don Jacinto.');
     });
 
     function init() {
@@ -1003,6 +1083,7 @@
         el.plantStageImg.style.display = 'none';
         el.plantStageEmoji.style.display = 'block';
         el.plantStageEmoji.textContent = '❓';
+        el.potDropzone.classList.add('waiting-touch');
     }
 
     window.onload = init;
