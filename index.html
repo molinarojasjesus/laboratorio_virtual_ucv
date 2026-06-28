@@ -570,7 +570,7 @@
         </div>
         <div class="game-title-container">
             <h1>🌱 Laboratorio del Ciclo de Vida</h1>
-            <p>¡Investiga el ciclo biológico completo con Don Jacinto!</p>
+            <p>¡Investiga el ciclo biológico completo con la Profesora Jacinta!</p>
         </div>
     </header>
 
@@ -653,11 +653,13 @@
 
     <footer class="dialogue-section">
         <div class="avatar-container">
-            <div class="avatar-bg">👨🏽‍🌾</div>
-            <div class="audio-wave" id="audioBtn" title="Escuchar a Don Jacinto">🔊</div>
+            <!-- MODIFICADO: Emoji de Profesora Jacinta -->
+            <div class="avatar-bg">👩🏽‍🏫</div>
+            <div class="audio-wave" id="audioBtn" title="Escuchar a la Profesora Jacinta">🔊</div>
         </div>
         <div class="dialogue-bubble">
-            <p class="dialogue-text" id="dialogueText">¡Hola investigador! Soy Don Jacinto de la UCV. Arrastra la semilla con el ratón o selecciónala con un toque para colocarla sobre la tierra húmeda.</p>
+            <!-- MODIFICADO: Saludo de la Profesora Jacinta -->
+            <p class="dialogue-text" id="dialogueText">¡Hola investigador! Soy la Profesora Jacinta de la UCV. Arrastra la semilla con el ratón o selecciónala con un toque para colocarla sobre la tierra húmeda.</p>
         </div>
     </footer>
 </div>
@@ -669,7 +671,6 @@
             growthDays: [0, 6, 20, 60, 95, 135],
             scales: [0.85, 0.9, 1.05, 1.2, 1.35, 1.4],
             positions: ["15%", "22%", "30%", "30%", "30%", "30%"],
-            // CORREGIDO: Ahora empieza correctamente en maiz_0.png hasta maiz_5.png
             images: ["maiz_0.png", "maiz_1.png", "maiz_2.png", "maiz_3.png", "maiz_4.png", "maiz_5.png"],
             descriptions: [
                 "Día 0: Grano de maíz durmiendo bajo tierra húmeda.",
@@ -856,6 +857,7 @@
         el.plantStageImg.style.display = 'none'; el.plantStageImg.src = '';
         el.progressSteps.forEach((step, idx) => { step.classList.remove('active'); if (idx === 0) step.classList.add('active'); });
         el.effectsContainer.innerHTML = ''; state.selectedSeed = 'maiz';
+        // MODIFICADO: Ajuste del texto de reinicio a femenino
         setDialogue('Laboratorio reiniciado. Elige una semilla para empezar.');
     });
 
