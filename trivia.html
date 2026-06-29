@@ -3,144 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>El Laberinto del Saber: UCV Edición</title>
+    <title>El Laberinto del Saber: ¡Salva a la Profesora Rosa!</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --ucv-blue: #0056b3;
-            --ucv-gold: #ffc107;
+            --primary-blue: #1e59e5;
             --accent-green: #2ecc71;
             --accent-red: #e74c3c;
+            --text-dark: #2c3e50;
         }
 
-        body { font-family: 'Quicksand', sans-serif; background: #f0f2f5; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        body { font-family: 'Quicksand', sans-serif; background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 10px; }
 
-        #game-container { background-color: #ffffff; width: 100%; max-width: 950px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; border: 4px solid #ffffff; }
+        #game-container { background-color: #ffffff; width: 100%; max-width: 950px; border-radius: 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.15); overflow: hidden; display: flex; flex-direction: column; border: 4px solid #ffffff; }
 
-        .header-ucv { background-color: var(--ucv-blue); color: white; padding: 20px; display: flex; align-items: center; justify-content: space-between; }
-        .logo-placeholder { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .header-ucv { background-color: var(--primary-blue); color: white; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #f1f5f9; }
+        .header-logo-section { display: flex; align-items: center; gap: 12px; }
+        .header-logo-section img { height: 45px; background: white; padding: 4px; border-radius: 8px; }
+
+        .main-content { display: flex; flex-direction: column; height: auto; }
         
-        #panel-visual { width: 100%; height: 350px; position: relative; background: #e0f2ff; border-bottom: 4px solid #cbd5e1; overflow: hidden; background-image: url('torre_profesora.png'); background-size: cover; background-position: right; }
+        #panel-visual { width: 100%; height: 320px; position: relative; background-image: url('profesora.png'); background-size: cover; background-position: center; border-bottom: 2px solid #e2e8f0; overflow: hidden; }
 
-        .dragon { position: absolute; width: 120px; height: 120px; background-image: url('dragon.png'); background-size: contain; background-repeat: no-repeat; top: 40%; left: -15%; z-index: 10; transition: left 0.5s linear; }
+        .dragon { position: absolute; width: 120px; height: 120px; background-image: url('dragon.png'); background-size: contain; background-repeat: no-repeat; top: 40%; left: -15%; z-index: 10; transition: left 0.1s linear; animation: bobbing 2s infinite ease-in-out; }
+        @keyframes bobbing { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
         .dragon.flee { transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1) !important; left: -100% !important; transform: scaleX(-1) scale(0.5); }
 
-        .particle { position: absolute; width: 15px; height: 15px; background: var(--ucv-gold); border-radius: 50%; opacity: 0; pointer-events: none; }
-        @keyframes blow { 0% { opacity: 1; transform: translate(0,0); } 100% { opacity: 0; transform: translate(-300px, -100px) rotate(360deg); } }
+        .effect-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 15; overflow: hidden; }
+        .wind-particle { position: absolute; font-size: 2.5rem; animation: blowWind 0.8s linear forwards; }
+        @keyframes blowWind { 0% { transform: translateX(450px) translateY(0) scale(0.5); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(-150px) translateY(-50px) scale(1.5); opacity: 0; } }
 
-        #panel-trivia { padding: 30px; }
-        .timer-bar { width: 100%; height: 15px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
-        #progress { height: 100%; width: 100%; background: linear-gradient(to right, var(--accent-green), var(--ucv-gold), var(--accent-red)); transition: width 0.1s linear; }
+        #panel-trivia { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .timer-container-bar { width: 100%; height: 12px; background-color: #f1f5f9; border-radius: 6px; overflow: hidden; border: 2px solid #e2e8f0; }
+        .timer-progress { height: 100%; width: 100%; background: linear-gradient(to right, var(--accent-green), var(--accent-yellow), var(--accent-red)); transition: width 0.1s linear; }
 
-        .btn-option { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #cbd5e1; background: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .btn-option:hover { border-color: var(--ucv-blue); transform: scale(1.02); }
+        .btn-option { background-color: #ffffff; border: 3px solid #cbd5e1; border-radius: 12px; padding: 14px; font-weight: 700; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .btn-option:hover { border-color: var(--primary-blue); }
+        .btn-option.correct { background-color: #d1fae5 !important; border-color: var(--accent-green) !important; color: #065f46; }
+        .btn-option.incorrect { background-color: #fee2e2 !important; border-color: var(--accent-red) !important; color: #991b1b; }
+
+        .screen-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.98); z-index: 100; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .btn-start { background: var(--primary-blue); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 15px rgba(30, 89, 229, 0.4); }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <header class="header-ucv">
-        <div class="logo-placeholder"><i class="fa-solid fa-graduation-cap"></i> UCV - Laberinto</div>
-        <div><i class="fa-solid fa-user-graduate"></i> Profesora en apuros</div>
-    </header>
-
-    <div id="panel-visual">
-        <div id="dragon-sprite" class="dragon"></div>
-        <div id="particles"></div>
+    <div id="startScreen" class="screen-overlay" style="display: flex;">
+        <h2>El Laberinto del Saber</h2>
+        <p>¡Responde las preguntas y salva a la Profesora Rosa del dragón!</p>
+        <button class="btn-start" onclick="initGame()">Iniciar el Juego</button>
     </div>
 
-    <div id="panel-trivia">
-        <div class="timer-bar"><div id="progress"></div></div>
-        <h2 id="question">Cargando...</h2>
-        <div id="options"></div>
+    <header class="header-ucv">
+        <div class="header-logo-section">
+            <img src="logo_ucv.png" alt="Logo UCV" onerror="this.style.display='none';">
+            <div><h1>UCV - PRIMARIA</h1></div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div id="panel-visual">
+            <div id="dragon-sprite" class="dragon"></div>
+            <div id="effect-layer" class="effect-overlay"></div>
+        </div>
+
+        <div id="panel-trivia">
+            <div class="timer-container-bar"><div id="timer-progress" class="timer-progress"></div></div>
+            <p id="question-text" style="font-weight: 700; font-size: 1.1rem;"></p>
+            <div id="options-grid" style="display: grid; gap: 10px;"></div>
+        </div>
     </div>
 </div>
 
 <script>
     const QUESTIONS = [
-        { q: "¿Cuál es la primera fase del ciclo de vida de una planta?", options: ["Nacimiento desde semilla", "Floración", "Fruto"], correct: 0 },
-        { q: "¿Qué necesita una planta para vivir?", options: ["Arena y oscuridad", "Agua, sol y tierra", "Plástico"], correct: 1 }
+        { q: "¿Cuál es la primera fase del ciclo de vida de una planta?", options: ["Nacimiento desde una semilla", "Floración", "Fruto"], correct: 0 },
+        { q: "¿Qué necesita la semilla para despertar?", options: ["Sombra", "Agua y sol", "Arena"], correct: 1 }
     ];
 
-    let timeLeft = 20;
+    let timeLeft = 19;
+    let timerInterval = null;
     let currentIdx = 0;
-    let timerInterval;
 
-    function startGame() {
-        renderQuestion();
+    function initGame() {
+        document.getElementById('startScreen').style.display = 'none';
+        loadQuestion(0);
         startTimer();
     }
 
-    function renderQuestion() {
-        const q = QUESTIONS[currentIdx];
-        document.getElementById('question').textContent = q.q;
-        const opts = document.getElementById('options');
-        opts.innerHTML = '';
-        q.options.forEach((opt, i) => {
+    function loadQuestion(idx) {
+        currentIdx = idx;
+        document.getElementById('question-text').textContent = QUESTIONS[idx].q;
+        const grid = document.getElementById('options-grid');
+        grid.innerHTML = '';
+        QUESTIONS[idx].options.forEach((opt, i) => {
             const btn = document.createElement('button');
             btn.className = 'btn-option';
-            btn.textContent = opt;
-            btn.onclick = () => checkAnswer(i);
-            opts.appendChild(btn);
+            btn.textContent = (i+1) + ". " + opt;
+            btn.onclick = () => checkAnswer(i, btn);
+            grid.appendChild(btn);
         });
     }
 
-    function checkAnswer(selected) {
+    function checkAnswer(selected, btn) {
+        clearInterval(timerInterval);
         if (selected === QUESTIONS[currentIdx].correct) {
-            triggerWinEffects();
-            currentIdx++;
-            if (currentIdx < QUESTIONS.length) {
-                setTimeout(renderQuestion, 1500);
-            } else {
-                alert("¡Has salvado a la profesora!");
-            }
+            btn.classList.add('correct');
+            triggerWindEffect();
+            setTimeout(() => {
+                if(currentIdx < QUESTIONS.length - 1) {
+                    loadQuestion(currentIdx + 1);
+                    startTimer();
+                } else { alert("¡Has salvado a la profesora!"); }
+            }, 1000);
         } else {
+            btn.classList.add('incorrect');
             alert("¡Oh no! El dragón se acerca.");
+            startTimer();
         }
     }
 
-    function triggerWinEffects() {
+    function triggerWindEffect() {
         const dragon = document.getElementById('dragon-sprite');
-        dragon.classList.add('flee');
-        
-        // Crear partículas (efecto viento)
-        for(let i=0; i<15; i++) {
+        dragon.style.left = '-25%'; // Retrocede
+        const layer = document.getElementById('effect-layer');
+        for(let i=0; i<8; i++) {
             const p = document.createElement('div');
-            p.className = 'particle';
-            p.style.top = (40 + Math.random()*20) + '%';
-            p.style.left = '20%';
-            p.style.animation = `blow ${0.5 + Math.random()}s forwards`;
-            document.getElementById('particles').appendChild(p);
+            p.className = 'wind-particle';
+            p.innerHTML = '✨';
+            p.style.top = (20 + Math.random()*50) + '%';
+            p.style.animationDelay = (i*0.1) + 's';
+            layer.appendChild(p);
+            setTimeout(() => p.remove(), 1000);
         }
-
-        setTimeout(() => {
-            dragon.classList.remove('flee');
-            dragon.style.left = "-15%";
-            document.getElementById('particles').innerHTML = '';
-            timeLeft = 20; // Reinicia el tiempo al ganar
-        }, 1500);
     }
 
     function startTimer() {
-        const dragon = document.getElementById('dragon-sprite');
+        timeLeft = 19;
+        clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             timeLeft -= 0.1;
-            document.getElementById('progress').style.width = (timeLeft / 20 * 100) + "%";
-            
-            // El dragón se mueve desde -15% hacia la torre (que está a la derecha)
-            const pos = -15 + ((20 - timeLeft) / 20 * 95);
-            dragon.style.left = pos + "%";
-
+            document.getElementById('timer-progress').style.width = (timeLeft / 19 * 100) + "%";
+            // El dragón avanza hacia la torre (derecha)
+            const progress = (19 - timeLeft) / 19;
+            document.getElementById('dragon-sprite').style.left = (-15 + (progress * 70)) + "%"; 
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
                 alert("¡El dragón ha llegado a la torre!");
             }
         }, 100);
     }
-
-    window.onload = startGame;
 </script>
 </body>
 </html>
