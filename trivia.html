@@ -25,12 +25,12 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body class="flex items-center justify-center min-h-screen p-4 relative">
 
-    <div id="game-container" class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border-4 border-blue-800">
+    <div id="game-container" class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border-4 border-blue-800 relative z-10">
         
         <div class="bg-blue-800 text-white p-4 flex items-center justify-between">
-            <img src="logo_ucv.png" alt="Logo UCV" class="h-12 w-auto bg-white p-1 rounded-lg">
+            <img src="logo_ucv.png" alt="Logo UCV" class="h-12 w-auto bg-white p-1 rounded-lg" onerror="this.src='https://placehold.co/100x40?text=UCV'">
             <div class="text-right">
                 <h1 class="text-xl font-bold">El Laberinto del Saber</h1>
                 <p class="text-blue-200 text-sm">Escuela de Educación Primaria</p>
@@ -42,8 +42,9 @@
             <div id="hearts" class="flex gap-2 text-2xl">❤️ ❤️ ❤️</div>
         </div>
 
-        <div id="stage" class="relative h-64 overflow-hidden border-b-4 border-blue-700">
-            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-4 left-0 w-24 h-24 transition-all duration-300 ease-linear z-10 animate-fly" onerror="this.style.display='none'">
+        <div id="stage" class="relative h-64 overflow-hidden border-b-4 border-blue-700 bg-blue-100">
+            <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold text-sm pointer-events-none">[Fondo: profesora.png]</div>
+            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-4 left-0 w-24 h-24 transition-all duration-300 ease-linear z-10 animate-fly" onerror="this.src='https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8yNl9jYXJ0b29uX3JlZF9kcmFnb25fbmVvbl9saW5lX2FydF9pc29sYXRlZF9vbl9fOTU2NDlhYmMtOTQ3OS00N2EzLWJiYTEtNGVjZTAzMzA0ZTMzLnBuZw.png'">
         </div>
 
         <div class="px-6 py-4">
@@ -59,8 +60,21 @@
         </div>
     </div>
 
+    <div id="end-overlay" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" style="display: none;">
+        <div class="bg-white p-8 rounded-3xl max-w-md w-full text-center border-4 border-blue-600 shadow-2xl">
+            <h2 id="end-title" class="text-3xl font-bold mb-2">¡Fin del Juego!</h2>
+            <p id="end-message" class="text-gray-600 mb-6">Mensaje de resultado</p>
+            <div class="bg-blue-50 rounded-2xl p-4 mb-6">
+                <span class="text-gray-500 block uppercase tracking-wider text-xs font-bold">Puntaje Final</span>
+                <span id="end-score" class="text-4xl font-bold text-blue-800">0</span>
+            </div>
+            <button onclick="startGame()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-6 rounded-2xl text-xl shadow-lg transition transform active:scale-95">
+                Volver a Jugar 🔄
+            </button>
+        </div>
+    </div>
+
     <script>
-        // Se define una lógica de velocidad 40% mayor
         const QUESTIONS = [
             { q: "¿Cómo crece el Girasol?", img: "girasol_1.png", options: ["Semilla", "Fruto", "Raíz"], correct: 0 },
             { q: "¿Cómo crece el Maíz?", img: "maiz_1.png", options: ["Semilla", "Roca", "Metal"], correct: 0 },
@@ -80,9 +94,7 @@
         function runTimer() {
             clearInterval(interval);
             interval = setInterval(() => {
-                // Timer baja 40% más rápido (0.14 vs 0.1)
                 timer -= 0.14; 
-                // Dragón avanza 40% más rápido (0.07 vs 0.05)
                 dragonPos += 0.07; 
                 
                 document.getElementById('timer-bar').style.width = timer + "%";
@@ -114,17 +126,23 @@
             });
         }
 
+        function shrinkDragon() {
+            // Animación visual de retroceso del dragón al acertar
+            dragonPos = Math.max(0, dragonPos - 15);
+            document.getElementById('dragon').style.left = dragonPos + "%";
+        }
+
         function checkAnswer(idx) {
             if (idx === QUESTIONS[currentIdx].correct) {
                 score += 25;
-                dragonPos = Math.max(0, dragonPos - 15);
+                shrinkDragon();
             } else {
                 lives--;
             }
             updateUI();
             if (lives <= 0) { gameOver(false); return; }
             currentIdx++;
-            if (currentIdx >= QUESTIONS.length) { gameOver(score >= 70); }
+            if (currentIdx >= QUESTIONS.length) { gameOver(score >= 50); } // Victoria si consigues al menos 50 puntos
             else { loadQuestion(); }
         }
 
@@ -135,9 +153,27 @@
 
         function gameOver(won) {
             clearInterval(interval);
-            // ... (Lógica de overlay omitida para brevedad, igual a la anterior)
+            const overlay = document.getElementById('end-overlay');
+            const title = document.getElementById('end-title');
+            const message = document.getElementById('end-message');
+            const scoreDisplay = document.getElementById('end-score');
+            
+            scoreDisplay.textContent = score;
+            
+            if (won) {
+                title.textContent = "¡Victoria! 🎉";
+                title.className = "text-3xl font-bold text-emerald-600 mb-2";
+                message.textContent = "¡Increíble! Lograste superar el laberinto y rescatar el conocimiento.";
+            } else {
+                title.textContent = "¡Oh no! 💥";
+                title.className = "text-3xl font-bold text-red-600 mb-2";
+                message.textContent = "El dragón te ha alcanzado o te quedaste sin vidas. ¡Inténtalo de nuevo!";
+            }
+            
+            overlay.style.display = 'flex';
         }
 
+        // Arranca el juego automáticamente
         startGame();
     </script>
 </body>
