@@ -39,42 +39,53 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4 relative overflow-hidden">
+<body class="flex flex-col items-center justify-start md:justify-center min-h-screen p-2 md:p-4 relative">
 
-    <div id="game-container" class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border-4 border-blue-800 relative z-10">
+    <div id="start-overlay" class="fixed inset-0 bg-blue-900 flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 md:p-8 rounded-3xl max-w-md w-full text-center border-4 border-blue-600 shadow-2xl">
+            <img src="logo_ucv.png" alt="Logo UCV" class="h-16 mx-auto mb-4 bg-blue-50 p-2 rounded-xl" onerror="this.src='https://placehold.co/100x40?text=UCV'">
+            <h2 class="text-3xl font-bold text-blue-800 mb-2">¡Bienvenido!</h2>
+            <p class="text-gray-600 mb-6 text-sm md:text-base">Ayuda a proteger la escuela respondiendo preguntas sobre las etapas de vida de las plantas antes de que llegue el dragón.</p>
+            <button onclick="initGameFirstTime()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-6 rounded-2xl text-xl shadow-lg transition transform active:scale-95 animate-bounce">
+                ¡Comenzar Desafío! 🚀
+            </button>
+        </div>
+    </div>
+
+    <div id="game-container" class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border-4 border-blue-800 relative z-10 my-auto">
         
-        <div class="bg-blue-800 text-white p-4 flex items-center justify-between">
-            <img src="logo_ucv.png" alt="Logo UCV" class="h-12 w-auto bg-white p-1 rounded-lg" onerror="this.src='https://placehold.co/100x40?text=UCV'">
+        <div class="bg-blue-800 text-white p-3 md:p-4 flex items-center justify-between">
+            <img src="logo_ucv.png" alt="Logo UCV" class="h-10 md:h-12 w-auto bg-white p-1 rounded-lg" onerror="this.src='https://placehold.co/100x40?text=UCV'">
             <div class="text-right">
-                <h1 class="text-xl font-bold">El Laberinto del Saber</h1>
-                <p class="text-blue-200 text-sm">Escuela de Educación Primaria</p>
+                <h1 class="text-lg md:text-xl font-bold">El Laberinto del Saber</h1>
+                <p class="text-blue-200 text-xs md:text-sm">Escuela de Educación Primaria</p>
             </div>
         </div>
 
-        <div class="flex justify-between items-center px-8 py-4 bg-blue-50 border-b border-blue-100">
-            <div class="text-blue-900 font-bold text-lg">
-                Puntaje: <span id="score" class="text-2xl text-blue-700">0</span> <span class="text-gray-400 font-normal text-sm">/ 75 pts para ganar</span>
+        <div class="flex justify-between items-center px-4 md:px-8 py-3 bg-blue-50 border-b border-blue-100">
+            <div class="text-blue-900 font-bold text-base md:text-lg">
+                Puntaje: <span id="score" class="text-xl md:text-2xl text-blue-700">0</span> <span class="text-gray-400 font-normal text-xs md:text-sm">/ 75 pts</span>
             </div>
-            <div id="hearts" class="flex gap-2 text-2xl">❤️ ❤️ ❤️</div>
+            <div id="hearts" class="flex gap-1 md:gap-2 text-xl md:text-2xl">❤️ ❤️ ❤️</div>
         </div>
 
-        <div id="stage" class="relative h-64 overflow-hidden border-b-4 border-blue-700 bg-blue-100">
-            <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold text-sm pointer-events-none">[Fondo: profesora.png]</div>
-            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-4 left-0 w-24 h-24 transition-all duration-200 ease-linear z-10 animate-fly" onerror="this.src='https://placehold.co/100x100?text=🐉'">
+        <div id="stage" class="relative h-44 md:h-64 overflow-hidden border-b-4 border-blue-700 bg-blue-100">
+            <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold text-xs md:text-sm pointer-events-none">[Fondo: profesora.png]</div>
+            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-2 md:bottom-4 left-0 w-20 h-20 md:w-24 md:h-24 transition-all duration-200 ease-linear z-10 animate-fly" onerror="this.src='https://placehold.co/100x100?text=🐉'">
             
             <div id="particle-container" class="absolute inset-0 pointer-events-none"></div>
         </div>
 
-        <div class="px-6 py-4">
-            <div class="w-full h-5 bg-gray-200 rounded-full overflow-hidden border border-gray-300 p-0.5">
+        <div class="px-4 md:px-6 py-3">
+            <div class="w-full h-4 md:h-5 bg-gray-200 rounded-full overflow-hidden border border-gray-300 p-0.5">
                 <div id="timer-bar" class="h-full bg-emerald-500 w-full rounded-full transition-all duration-100 ease-linear shadow-inner"></div>
             </div>
         </div>
 
-        <div class="p-6">
-            <div id="q-image-container" class="mb-4 flex justify-center h-24"></div>
-            <h3 id="question-text" class="text-xl font-bold text-gray-800 mb-6 text-center">Cargando desafío...</h3>
-            <div id="btn-grid" class="grid gap-3"></div>
+        <div class="p-4 md:p-6">
+            <div id="q-image-container" class="mb-3 flex justify-center h-20 md:h-24"></div>
+            <h3 id="question-text" class="text-lg md:text-xl font-bold text-gray-800 mb-4 md:mb-6 text-center">Cargando desafío...</h3>
+            <div id="btn-grid" class="grid gap-2 md:gap-3"></div>
         </div>
     </div>
 
@@ -93,7 +104,6 @@
     </div>
 
     <script>
-        // --- BANCO CORREGIDO: ETAPAS Y VIDA DE LAS PLANTAS ---
         const ALL_QUESTIONS = [
             { q: "¿Cómo crece el Girasol?", img: "girasol_1.png", options: ["Semilla", "Fruto", "Raíz"], correct: 0 },
             { q: "¿Cómo crece el Maíz?", img: "maiz_1.png", options: ["Semilla", "Roca", "Metal"], correct: 0 },
@@ -116,7 +126,15 @@
         let score = 0, lives = 3, currentIdx = 0, dragonPos = 0, timer = 100, interval;
         const TARGET_SCORE = 75;
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // El AudioContext se creará al presionar el botón de inicio para evitar bloqueos del navegador
+        let audioCtx;
+
+        function initGameFirstTime() {
+            // Inicializar audio de manera segura tras acción del usuario
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            document.getElementById('start-overlay').style.display = 'none';
+            startGame();
+        }
 
         function playSound(type) {
             if (!audioCtx) return;
@@ -204,12 +222,12 @@
             const q = gameQuestions[currentIdx];
             document.getElementById('question-text').textContent = q.q;
             const container = document.getElementById('q-image-container');
-            container.innerHTML = q.img ? `<img src="${q.img}" class="h-24 w-auto rounded-xl shadow-lg border-2 border-blue-100" onerror="this.src='https://placehold.co/100x100?text=🌱'">` : '';
+            container.innerHTML = q.img ? `<img src="${q.img}" class="h-20 md:h-24 w-auto rounded-xl shadow-lg border-2 border-blue-100" onerror="this.src='https://placehold.co/100x100?text=🌱'">` : '';
             const grid = document.getElementById('btn-grid');
             grid.innerHTML = '';
             q.options.forEach((opt, i) => {
                 const btn = document.createElement('button');
-                btn.className = 'w-full p-3 border-2 border-blue-200 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition bg-white text-gray-700 shadow-sm';
+                btn.className = 'w-full p-2 md:p-3 border-2 border-blue-200 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition bg-white text-gray-700 shadow-sm text-sm md:text-base';
                 btn.textContent = opt;
                 btn.onclick = () => checkAnswer(i);
                 grid.appendChild(btn);
@@ -293,8 +311,6 @@
             
             overlay.style.display = 'flex';
         }
-
-        startGame();
     </script>
 </body>
 </html>
