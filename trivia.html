@@ -61,7 +61,7 @@
 
         <div id="stage" class="relative h-64 overflow-hidden border-b-4 border-blue-700 bg-blue-100">
             <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold text-sm pointer-events-none">[Fondo: profesora.png]</div>
-            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-4 left-0 w-24 h-24 transition-all duration-200 ease-linear z-10 animate-fly" onerror="this.src='https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8yNl9jYXJ0b29uX3JlZF9kcmFnb25fbmVvbl9saW5lX2FydF9pc29sYXRlZF9vbl9fOTU2NDlhYmMtOTQ3OS00N2EzLWJiYTEtNGVjZTAzMzA0ZTMzLnBuZw.png'">
+            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-4 left-0 w-24 h-24 transition-all duration-200 ease-linear z-10 animate-fly" onerror="this.src='https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8yNl9jYXJ0b29uX3JlZF9kcmF静fbmVvbl9saW5lX2FydF9pc29sYXRlZF9vbl9fOTU2NDlhYmMtOTQ3OS00N2EzLWJiYTEtNGVjZTAzMzA0ZTMzLnBuZw.png'">
             
             <div id="particle-container" class="absolute inset-0 pointer-events-none"></div>
         </div>
@@ -94,12 +94,26 @@
     </div>
 
     <script>
-        const QUESTIONS = [
+        // --- BANCO EXTENDIDO A 15 PREGUNTAS ---
+        const ALL_QUESTIONS = [
             { q: "¿Cómo crece el Girasol?", img: "girasol_1.png", options: ["Semilla", "Fruto", "Raíz"], correct: 0 },
             { q: "¿Cómo crece el Maíz?", img: "maiz_1.png", options: ["Semilla", "Roca", "Metal"], correct: 0 },
-            { q: "¿Qué necesita la planta para vivir?", img: "imagen_3.png", options: ["Agua", "Solo luz", "Solo tierra"], correct: 0 }
+            { q: "¿Qué necesita la planta para vivir?", img: "imagen_3.png", options: ["Agua", "Solo luz", "Solo tierra"], correct: 0 },
+            { q: "¿Cuál de estos animales es un mamífero?", img: "https://placehold.co/100x100?text=🐳", options: ["Tiburón", "Ballena", "Pez Payaso"], correct: 1 },
+            { q: "¿Por dónde respiran los peces?", img: "https://placehold.co/100x100?text=🐟", options: ["Pulmones", "Branquias", "La piel"], correct: 1 },
+            { q: "¿Qué gas absorben las plantas para hacer la fotosíntesis?", img: "https://placehold.co/100x100?text=🌱", options: ["Oxígeno", "Dióxido de Carbono", "Nitrógeno"], correct: 1 },
+            { q: "¿Qué tipo de animal es una rana?", img: "https://placehold.co/100x100?text=🐸", options: ["Anfibio", "Reptil", "Mamífero"], correct: 0 },
+            { q: "¿Cuál es el planeta más cercano al Sol?", img: "https://placehold.co/100x100?text=☀️", options: ["Tierra", "Marte", "Mercurio"], correct: 2 },
+            { q: "¿Qué estado del agua es el hielo?", img: "https://placehold.co/100x100?text=❄️", options: ["Líquido", "Sólido", "Gaseoso"], correct: 1 },
+            { q: "¿Cuántos huesos aproximados tiene el cuerpo humano adulto?", img: "https://placehold.co/100x100?text=💀", options: ["102", "206", "300"], correct: 1 },
+            { q: "¿Qué órgano usamos para pensar y controlar el cuerpo?", img: "https://placehold.co/100x100?text=🧠", options: ["Corazón", "Estómago", "Cerebro"], correct: 2 },
+            { q: "¿Qué animal es conocido por ser el mejor amigo del hombre?", img: "https://placehold.co/100x100?text=🐶", options: ["El gato", "El perro", "El loro"], correct: 1 },
+            { q: "¿De dónde obtenemos la energía solar?", img: "https://placehold.co/100x100?text=🔋", options: ["Del Sol", "Del viento", "Del agua"], correct: 0 },
+            { q: "¿Cuál de estos animales es un ave que NO vuela?", img: "https://placehold.co/100x100?text=🐧", options: ["Águila", "Pingüino", "Paloma"], correct: 1 },
+            { q: "¿Qué parte de la planta absorbe el agua del suelo?", img: "https://placehold.co/100x100?text=🪵", options: ["La raíz", "Las hojas", "El tallo"], correct: 0 }
         ];
 
+        let gameQuestions = []; // Aquí guardaremos las preguntas mezcladas en cada partida
         let score = 0, lives = 3, currentIdx = 0, dragonPos = 0, timer = 100, interval;
         const TARGET_SCORE = 75;
 
@@ -139,8 +153,23 @@
             }
         }
 
+        // --- FUNCIÓN DE ALEATORIEDAD (ALGORITMO FISHER-YATES) ---
+        function shuffleQuestions() {
+            // Clonamos el banco de preguntas completo para no destruir el original
+            let shuffled = [...ALL_QUESTIONS];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
         function startGame() {
             score = 0; lives = 3; currentIdx = 0; dragonPos = 0; timer = 100;
+            
+            // Mezclamos las preguntas al iniciar o reiniciar
+            gameQuestions = shuffleQuestions(); 
+
             document.getElementById('end-overlay').style.display = 'none';
             updateUI();
             loadQuestion();
@@ -149,7 +178,6 @@
 
         function runTimer() {
             clearInterval(interval);
-            // El juego corre ahora más rápido (aproximadamente 7 segundos por pregunta si no respondes)
             interval = setInterval(() => {
                 timer -= 1.4; 
                 dragonPos += 0.8; 
@@ -158,7 +186,6 @@
                 timerBar.style.width = timer + "%";
                 document.getElementById('dragon').style.left = dragonPos + "%";
                 
-                // Cambio dinámico de color de la barra
                 if (timer > 50) {
                     timerBar.className = "h-full bg-emerald-500 rounded-full transition-all duration-100 ease-linear shadow-inner";
                 } else if (timer <= 50 && timer > 25) {
@@ -180,8 +207,8 @@
         }
 
         function loadQuestion() {
-            timer = 100; // Resetear el tiempo en cada pregunta
-            const q = QUESTIONS[currentIdx];
+            timer = 100; 
+            const q = gameQuestions[currentIdx]; // Usamos la lista mezclada
             document.getElementById('question-text').textContent = q.q;
             const container = document.getElementById('q-image-container');
             container.innerHTML = q.img ? `<img src="${q.img}" class="h-24 w-auto rounded-xl shadow-lg border-2 border-blue-100" onerror="this.src='https://placehold.co/100x100?text=?'">` : '';
@@ -196,7 +223,6 @@
             });
         }
 
-        // EFECTO VISUAL DE EMOJIS
         function spawnParticles(emoji, count, startFromLeft) {
             const container = document.getElementById('particle-container');
             for (let i = 0; i < count; i++) {
@@ -206,10 +232,8 @@
                 p.style.bottom = (Math.random() * 40 + 20) + 'px';
                 
                 if (startFromLeft) {
-                    // Estrellas salen desde donde esté el dragón hacia adelante
                     p.style.left = (dragonPos + Math.random() * 15) + '%';
                 } else {
-                    // Corazones salen dispersos por toda la zona inferior
                     p.style.left = (Math.random() * 80 + 10) + '%';
                 }
                 
@@ -220,27 +244,31 @@
         }
 
         function checkAnswer(idx) {
-            if (idx === QUESTIONS[currentIdx].correct) {
+            if (idx === gameQuestions[currentIdx].correct) {
                 score += 25;
                 playSound('correct');
-                // El dragón retrocede y se lanzan las partículas
                 dragonPos = Math.max(0, dragonPos - 20);
                 document.getElementById('dragon').style.left = dragonPos + "%";
                 
-                spawnParticles('⭐', 8, true);  // Estrellas empujando al dragón
-                spawnParticles('❤️', 8, false); // Corazones de celebración
+                spawnParticles('⭐', 8, true);  
+                spawnParticles('❤️', 8, false); 
             } else {
                 lives--;
                 playSound('wrong');
             }
             updateUI();
+            
+            // Si el jugador ya llegó a los 75 puntos exigidos, ¡gana automáticamente!
+            if (score >= TARGET_SCORE) { gameOver(true); return; }
             if (lives <= 0) { gameOver(false); return; }
+            
             nextQuestion();
         }
 
         function nextQuestion() {
             currentIdx++;
-            if (currentIdx >= QUESTIONS.length) { 
+            // Si se acaban las preguntas disponibles en la ronda antes del target
+            if (currentIdx >= gameQuestions.length) { 
                 gameOver(score >= TARGET_SCORE); 
             } else { 
                 loadQuestion(); 
