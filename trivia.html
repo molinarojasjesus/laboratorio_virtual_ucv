@@ -3,218 +3,427 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rescate en el Laberinto - Profesora Jacinta</title>
+    <title>El Laberinto del Saber: Ciclos de Vida</title>
     <style>
+        :root {
+            --primary-blue: #1e59e5;
+            --light-bg: #f0f4f8;
+        }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #e0f2f1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
             margin: 0;
-            padding: 20px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        #game-wrapper {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Encabezado institucional estilo UCV */
+        .header-ucv {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        .header-ucv img {
+            height: 45px;
+            vertical-align: middle;
+            margin-bottom: 5px;
+        }
+        .header-ucv h1 {
+            margin: 5px 0 0 0;
+            font-size: 1.4em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        /* Contenedor Principal dividido en dos columnas */
+        .main-content {
+            display: flex;
+            flex-direction: row;
+            min-height: 400px;
+        }
+        @media (max-width: 600px) {
+            .main-content { flex-direction: column; }
+        }
+        /* Panel Izquierdo: Visualización de la planta */
+        .panel-left {
+            flex: 1.2;
+            background-color: #d0f0fd;
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-        }
-        #game-container {
-            background-color: white;
-            border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 400px;
+            border-right: 2px solid #e2e8f0;
+        }
+        .arbol-mision {
+            position: relative;
             width: 100%;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-        }
-        #vidas { color: #e53935; }
-        #tiempo { color: #ffb300; }
-        #visual-box {
-            background-color: #81c784;
-            height: 120px;
-            border-radius: 10px;
+            max-width: 280px;
+            height: 280px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
-            font-size: 1.2em;
-            color: white;
-            font-weight: bold;
         }
-        #pregunta {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            min-height: 60px;
+        .img-planta {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
         }
-        .btn-opcion {
-            display: block;
-            width: 100%;
-            padding: 18px; /* Botones grandes para celular */
-            margin: 10px 0;
+        /* Profesora Jacinta atrapada en la copa del árbol */
+        .jacinta-atrapada {
+            position: absolute;
+            top: 10px;
+            font-size: 2.5em;
+            animation: auxilio 2s infinite ease-in-out;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            padding: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        @keyframes auxilio {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(5deg); }
+        }
+        /* Panel Derecho: Estadísticas, Tiempo y Trivia */
+        .panel-right {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #ffffff;
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 1.1em;
             font-weight: bold;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 3px 0 #388e3c;
+            margin-bottom: 10px;
         }
-        .btn-opcion:active {
-            transform: translateY(3px);
-            box-shadow: none;
+        .corazones { color: #ff4757; font-size: 1.2em; }
+        /* Barra de progreso / temporizador multicolor */
+        .timer-container {
+            width: 100%;
+            height: 14px;
+            background-color: #e2e8f0;
+            border-radius: 7px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(to right, #2ed573, #ffa502, #ff4757);
+            transition: width 1s linear;
+        }
+        .box-desafio {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #334155;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .btn-opcion {
+            background-color: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #475569;
+            cursor: pointer;
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: left;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .btn-opcion:hover {
+            background-color: #f1f5f9;
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        .btn-opcion:active { transform: scale(0.98); }
+        /* Footer: Profesora Rosa con bocadillo */
+        .footer-rosa {
+            background-color: #fff9db;
+            border-top: 2px solid #ffe066;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .avatar-rosa { font-size: 2.5em; }
+        .bocadillo-rosa {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid #ffe066;
+            font-size: 0.95em;
+            font-weight: 500;
+            color: #664d03;
+            flex: 1;
+            position: relative;
         }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <div class="stats">
-        <div>Vidas: <span id="vidas">❤️ ❤️ ❤️</span></div>
-        <div>⏱️ <span id="tiempo">15</span>s</div>
+<div id="game-wrapper">
+    <!-- Encabezado UCV -->
+    <div class="header-ucv">
+        <img src="logo_ucv.png" alt="Logo UCV" onerror="this.style.display='none';">
+        <h1>🏆 El Laberinto del Saber: Ciclos de Vida</h1>
     </div>
 
-    <div id="visual-box">🌱 Estado: Semilla</div>
-
-    <div id="pregunta">Cargando pregunta...</div>
-
-    <div id="opciones-container">
+    <div class="main-content">
+        <!-- Izquierda: Mapa / Estado del árbol -->
+        <div class="panel-left">
+            <div style="position: absolute; top: 10px; left: 15px; font-weight: bold; color: #1e3a8a;">Progreso de Rescate</div>
+            <div class="arbol-mision">
+                <!-- Aquí se renderiza dinámicamente la planta de turno -->
+                <img id="img-planta-actual" src="girasol_0.png" class="img-planta" alt="Fase Planta">
+                <!-- Profesora Jacinta atrapada en lo alto -->
+                <div id="jacinta" class="jacinta-atrapada">👩‍🏫</div>
+            </div>
         </div>
+
+        <!-- Derecha: Control de Trivia -->
+        <div class="panel-right">
+            <div class="stats-bar">
+                <div>Puntos: <span id="puntos">0</span></div>
+                <div id="corazones-ui" class="corazones">❤️ ❤️ ❤️</div>
+            </div>
+
+            <!-- Barra de tiempo multicolor -->
+            <div class="timer-container">
+                <div id="barra-tiempo" class="timer-bar"></div>
+            </div>
+
+            <!-- Caja de preguntas -->
+            <div id="pregunta-texto" class="box-desafio">Cargando desafío...</div>
+
+            <!-- Contenedor de portales / opciones -->
+            <div id="opciones-container">
+                <button class="btn-opcion">Opción 1</button>
+                <button class="btn-opcion">Opción 2</button>
+                <button class="btn-opcion">Opción 3</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Abajo: Consejos de la Profesora Rosa -->
+    <div class="footer-rosa">
+        <div class="avatar-rosa">👩‍🏫</div>
+        <div id="feedback-rosa" class="bocadillo-rosa">
+            ¡Hola investigador! Responde correctamente para hacer crecer la planta, trepar por ella y salvar a la Profesora Jacinta antes de que se agote el tiempo.
+        </div>
+    </div>
 </div>
 
 <script>
-// 1. Banco de preguntas sobre el ciclo de vida de las plantas
+// Banco de preguntas equilibrado que avanza por fases (0 a 5)
+// Alterna visualmente entre imágenes de girasol y maíz según la pregunta
 const preguntas = [
     {
-        q: "¿Cuál es la primera etapa en la vida de una planta?",
-        options: ["Germinación", "Polinización", "Dispersión"],
-        correct: 0,
-        fasePlanta: "🌿 Brote inicial"
-    },
-    {
-        q: "¿Qué necesita la semilla principalmente para despertar?",
-        options: ["Sombra y viento", "Agua y calor", "Tierra seca"],
+        q: "Fase 1: ¿Con qué estructura inicia el ciclo de vida del Girasol o el Maíz?",
+        options: ["Con un fruto maduro", "Con una semilla en la tierra", "Con una hoja grande"],
         correct: 1,
-        fasePlanta: "🍃 Planta joven"
+        img: "girasol_0.png", 
+        infoRosa: "¡Excelente! La semilla es el punto de partida de nuestra planta."
     },
     {
-        q: "¿Qué parte de la planta absorbe el agua del suelo?",
-        options: ["Las hojas", "El tallo", "La raíz"],
-        correct: 2,
-        fasePlanta: "🌳 Planta adulta"
-    },
-    {
-        q: "¿Cómo se llama el proceso donde la flor se convierte en fruto?",
-        options: ["Polinización", "Fotosíntesis", "Absorción"],
+        q: "Fase 2: Al absorber agua y calor, la semilla se abre y sale una pequeña raíz. ¿Cómo se llama este proceso?",
+        options: ["Germinación", "Polinización", "Fotosíntesis"],
         correct: 0,
-        fasePlanta: "🌸 ¡Flores y frutos!"
+        img: "maiz_1.png",
+        infoRosa: "¡Muy bien! La germinación despierta a la planta de su sueño."
+    },
+    {
+        q: "Fase 3: El brote sale a la superficie y aparecen las primeras hojas verdes. ¿Qué necesitan principalmente ahora?",
+        options: ["Oscuridad total", "Solo viento fuerte", "Luz del sol y agua"],
+        correct: 2,
+        img: "girasol_2.png",
+        infoRosa: "¡Eso es! El sol les da la energía necesaria para fabricar su alimento."
+    },
+    {
+        q: "Fase 4: La planta crece, su tallo se vuelve fuerte y se convierte en una planta joven. ¿Qué parte la sujeta firmemente al suelo?",
+        options: ["Las raíces", "Las flores", "Las hojas"],
+        correct: 0,
+        img: "maiz_3.png",
+        infoRosa: "¡Correcto! Las raíces fijan la planta y absorben los nutrientes del suelo."
+    },
+    {
+        q: "Fase 5: ¡La planta es adulta y produce flores! ¿Cuál es la función principal de las vistosas flores amarillas del girasol?",
+        options: ["Hacer sombra a la tierra", "Atraer polinizadores como abejas", "Protegerse de la lluvia"],
+        correct: 1,
+        img: "girasol_4.png",
+        infoRosa: "¡Espectacular! Las abejas ayudan a que nazcan nuevas semillas transportando el polen."
+    },
+    {
+        q: "Fase Final: Las flores caen y dan origen a los frutos llenos de nuevas semillas (como la mazorca o las pipas). ¿Qué etapa sigue?",
+        options: ["La planta duerme para siempre", "El ciclo vuelve a comenzar dispersando las semillas", "La planta se convierte en piedra"],
+        correct: 1,
+        img: "maiz_5.png",
+        infoRosa: "¡Lo lograste! El ciclo de vida vuelve a empezar gracias a las nuevas semillas."
     }
 ];
 
-let preguntaActual = 0;
+let indiceActual = 0;
 let vidas = 3;
-let tiempo = 15;
-let temporizador;
+let puntos = 0;
+let tiempoRestante = 15;
+let intervaloTiempo;
 
-const txtVidas = document.getElementById("vidas");
-const txtTiempo = document.getElementById("tiempo");
-const txtPregunta = document.getElementById("pregunta");
-const txtVisual = document.getElementById("visual-box");
+// Elementos del DOM
+const imgPlanta = document.getElementById("img-planta-actual");
+const txtPregunta = document.getElementById("pregunta-texto");
 const containerOpciones = document.getElementById("opciones-container");
+const txtPuntos = document.getElementById("puntos");
+const containerCorazones = document.getElementById("corazones-ui");
+const barraTiempo = document.getElementById("barra-tiempo");
+const txtRosa = document.getElementById("feedback-rosa");
+const avatarJacinta = document.getElementById("jacinta");
 
 function iniciarTemporizador() {
-    tiempo = 15;
-    txtTiempo.textContent = tiempo;
-    clearInterval(temporizador);
-    
-    temporizador = setInterval(() => {
-        tiempo--;
-        txtTiempo.textContent = tiempo;
-        if (tiempo <= 0) {
-            clearInterval(temporizador);
-            recibirDanio("¡Se acabó el tiempo! Cayó una plaga 🐛");
+    tiempoRestante = 15;
+    barraTiempo.style.width = "100%";
+    clearInterval(intervaloTiempo);
+
+    intervaloTiempo = setInterval(() => {
+        tiempoRestante--;
+        // Reducir la barra proporcionalmente
+        let porcentaje = (tiempoRestante / 15) * 100;
+        barraTiempo.style.width = `${porcentaje}%`;
+
+        if (tiempoRestante <= 0) {
+            clearInterval(intervaloTiempo);
+            procesarFallo("¡Se acabó el tiempo! Una tormenta retrasó el rescate. ⚡");
         }
     }, 1000);
 }
 
-function cargarPregunta() {
-    if (preguntaActual >= preguntas.length) {
-        clearInterval(temporizador);
-        txtVisual.textContent = "🏆 ¡LOGRADO!";
-        txtPregunta.textContent = "¡Felicidades! Rescataste a la Profesora Jacinta del árbol gigante.";
+function cargarDesafio() {
+    // Si completó todas las preguntas con éxito
+    if (indiceActual >= preguntas.length) {
+        clearInterval(intervaloTiempo);
+        txtPregunta.textContent = "¡MISIÓN CUMPLIDA! 🎉";
         containerOpciones.innerHTML = "";
+        barraTiempo.style.width = "0%";
+        avatarJacinta.innerHTML = "🎉👩‍🏫🔓";
+        avatarJacinta.style.top = "120px"; // Cae a salvo
+        txtRosa.textContent = "¡Felicidades, investigador! Gracias a tus respuestas sobre los ciclos de vida, la planta creció lo suficiente y hemos rescatado sana y salva a la Profesora Jacinta.";
         return;
     }
 
-    iniciarTemporizador();
-    let p = preguntas[preguntaActual];
-    txtPregunta.textContent = p.q;
-    containerOpciones.innerHTML = "";
+    const desafio = preguntas[indiceActual];
+    
+    // Actualizar elementos visuales con tus archivos reales
+    txtPregunta.textContent = desafio.q;
+    imgPlanta.src = desafio.img; 
 
-    // Generar portales/caminos dinámicamente
-    p.options.forEach((opcion, index) => {
+    // Mover un poco a Jacinta hacia arriba simulando que el árbol crece
+    avatarJacinta.style.transform = `scale(${1 + (indiceActual * 0.1)})`;
+
+    // Limpiar y renderizar botones grandes
+    containerOpciones.innerHTML = "";
+    desafio.options.forEach((opcion, index) => {
         const boton = document.createElement("button");
         boton.className = "btn-opcion";
-        boton.textContent = `Portal: ${opcion}`;
+        boton.textContent = `${index + 1}. ${opcion}`;
         boton.onclick = () => verificarRespuesta(index);
         containerOpciones.appendChild(boton);
     });
+
+    iniciarTemporizador();
 }
 
 function verificarRespuesta(indiceSeleccionado) {
-    clearInterval(temporizador);
-    let p = preguntas[preguntaActual];
+    clearInterval(intervaloTiempo);
+    const desafio = preguntas[indiceActual];
 
-    if (indiceSeleccionado === p.correct) {
-        // Correcto: Avanza la planta
-        txtVisual.textContent = p.fasePlanta;
-        preguntaActual++;
-        alert("¡Correcto! El camino es seguro.");
-        cargarPregunta();
+    if (indiceSeleccionado === desafio.correct) {
+        puntos += 20;
+        txtPuntos.textContent = puntos;
+        txtRosa.textContent = desafio.infoRosa;
+        indiceActual++;
+        // Pequeño efecto visual de acierto
+        imgPlanta.style.transform = "scale(1.1)";
+        setTimeout(() => {
+            imgPlanta.style.transform = "scale(1)";
+            cargarDesafio();
+        }, 800);
     } else {
-        // Incorrecto: Tormenta/Plaga
-        recibirDanio("¡Portal incorrecto! Vino una tormenta ⚡");
+        procesarFallo("¡Portal equivocado! Cayó una plaga que debilitó el crecimiento. 🐛");
     }
 }
 
-function recibirDanio(mensaje) {
+function procesarFallo(mensajeDeAlerta) {
     vidas--;
     actualizarVidasUI();
-    alert(mensaje);
+    txtRosa.textContent = mensajeDeAlerta;
 
     if (vidas <= 0) {
-        clearInterval(temporizador);
-        txtVisual.textContent = "💀 FIN DEL JUEGO";
-        txtPregunta.textContent = "Te quedaste sin vidas. La Profesora Jacinta sigue atrapada.";
-        containerOpciones.innerHTML = "<button class='btn-opcion' onclick='reiniciarJuego()'>Reiniciar</button>";
+        clearInterval(intervaloTiempo);
+        txtPregunta.textContent = "FIN DEL JUEGO 💥";
+        imgPlanta.src = "girasol_0.png"; // Vuelve a semilla
+        containerOpciones.innerHTML = `<button class="btn-opcion" style="text-align:center; background-color:#ff4757; color:white;" onclick="reiniciarJuego()">Intentar de nuevo</button>`;
+        txtRosa.textContent = "Oh no, nos quedamos sin vidas y la Profesora Jacinta sigue atrapada. ¡Repasemos los ciclos de vida e intentemos otra vez!";
     } else {
-        cargarPregunta(); // Reintenta o pasa a la siguiente según prefieras (aquí reintenta la misma)
+        // En caso de error, le damos otra oportunidad en la misma pregunta
+        iniciarTemporizador();
     }
 }
 
 function actualizarVidasUI() {
-    let corazones = "";
-    for(let i=0; i<3; i++) {
-        corazones += i < vidas ? "❤️ " : "🖤 ";
+    let htmlCorazones = "";
+    for (let i = 0; i < 3; i++) {
+        htmlCorazones += i < vidas ? "❤️ " : "🖤 ";
     }
-    txtVidas.textContent = corazones;
+    containerCorazones.innerHTML = htmlCorazones;
 }
 
 function reiniciarJuego() {
     vidas = 3;
-    preguntaActual = 0;
+    puntos = 0;
+    indiceActual = 0;
+    txtPuntos.textContent = puntos;
     actualizarVidasUI();
-    txtVisual.textContent = "🌱 Estado: Semilla";
-    cargarPregunta();
+    txtRosa.textContent = "¡Nueva oportunidad! Vamos a rescatar a la Profesora Jacinta.";
+    cargarDesafio();
 }
 
-// Arrancar el juego por primera vez
-cargarPregunta();
+// Inicializar el juego al cargar la página
+window.onload = () => {
+    cargarDesafio();
+};
 </script>
 
 </body>
