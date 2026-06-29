@@ -2,160 +2,153 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>El Laberinto del Saber: ¡Salva a la Profesora Rosa!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Laberinto del Saber | UCV</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-    
     <style>
         :root {
-            --primary-blue: #1e59e5;
-            --accent-green: #2ecc71;
+            --primary-blue: #0056b3;
+            --accent-yellow: #f1c40f;
             --accent-red: #e74c3c;
-            --text-dark: #2c3e50;
+            --accent-green: #2ecc71;
         }
+        body { font-family: 'Quicksand', sans-serif; background: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        #game-container { background: white; width: 95%; max-width: 800px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; border: 4px solid var(--primary-blue); }
 
-        body { font-family: 'Quicksand', sans-serif; background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 10px; }
+        .header-ucv { background: var(--primary-blue); color: white; padding: 15px; text-align: center; }
+        .header-ucv h1 { margin: 0; font-size: 1.2rem; }
+        .header-ucv p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
 
-        #game-container { background-color: #ffffff; width: 100%; max-width: 950px; border-radius: 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.15); overflow: hidden; display: flex; flex-direction: column; border: 4px solid #ffffff; }
-
-        .header-ucv { background-color: var(--primary-blue); color: white; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #f1f5f9; }
-        .header-logo-section { display: flex; align-items: center; gap: 12px; }
-        .header-logo-section img { height: 45px; background: white; padding: 4px; border-radius: 8px; }
-
-        .main-content { display: flex; flex-direction: column; height: auto; }
+        .game-status { display: flex; justify-content: space-between; padding: 10px 20px; background: #eef2f7; font-weight: 700; align-items: center; }
+        .hearts { color: var(--accent-red); font-size: 1.5rem; }
         
-        #panel-visual { width: 100%; height: 320px; position: relative; background-image: url('profesora.png'); background-size: cover; background-position: center; border-bottom: 2px solid #e2e8f0; overflow: hidden; }
+        #panel-visual { height: 200px; position: relative; background: #bdc3c7; overflow: hidden; }
+        #dragon { position: absolute; left: -100px; top: 50px; font-size: 3rem; transition: left 0.5s linear; z-index: 2; }
+        #question-image { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+        
+        .trivia-area { padding: 20px; }
+        .timer-bar { height: 10px; background: #ddd; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+        #timer-progress { height: 100%; width: 100%; background: var(--accent-green); transition: width 0.1s linear; }
 
-        .dragon { position: absolute; width: 120px; height: 120px; background-image: url('dragon.png'); background-size: contain; background-repeat: no-repeat; top: 40%; left: -15%; z-index: 10; transition: left 0.1s linear; animation: bobbing 2s infinite ease-in-out; }
-        @keyframes bobbing { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
-        .dragon.flee { transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1) !important; left: -100% !important; transform: scaleX(-1) scale(0.5); }
+        .btn-grid { display: grid; gap: 10px; margin-top: 15px; }
+        .btn-option { padding: 15px; border: 2px solid var(--primary-blue); border-radius: 10px; cursor: pointer; background: white; font-weight: 600; }
+        .btn-option:hover { background: #e3f2fd; }
 
-        .effect-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 15; overflow: hidden; }
-        .wind-particle { position: absolute; font-size: 2.5rem; animation: blowWind 0.8s linear forwards; }
-        @keyframes blowWind { 0% { transform: translateX(450px) translateY(0) scale(0.5); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(-150px) translateY(-50px) scale(1.5); opacity: 0; } }
-
-        #panel-trivia { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .timer-container-bar { width: 100%; height: 12px; background-color: #f1f5f9; border-radius: 6px; overflow: hidden; border: 2px solid #e2e8f0; }
-        .timer-progress { height: 100%; width: 100%; background: linear-gradient(to right, var(--accent-green), var(--accent-yellow), var(--accent-red)); transition: width 0.1s linear; }
-
-        .btn-option { background-color: #ffffff; border: 3px solid #cbd5e1; border-radius: 12px; padding: 14px; font-weight: 700; cursor: pointer; text-align: left; transition: all 0.2s; }
-        .btn-option:hover { border-color: var(--primary-blue); }
-        .btn-option.correct { background-color: #d1fae5 !important; border-color: var(--accent-green) !important; color: #065f46; }
-        .btn-option.incorrect { background-color: #fee2e2 !important; border-color: var(--accent-red) !important; color: #991b1b; }
-
-        .screen-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.98); z-index: 100; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        .btn-start { background: var(--primary-blue); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 15px rgba(30, 89, 229, 0.4); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 10; display: none; }
+        .btn-restart { padding: 15px 30px; background: var(--accent-yellow); border: none; border-radius: 50px; font-weight: 700; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <div id="startScreen" class="screen-overlay" style="display: flex;">
-        <h2>El Laberinto del Saber</h2>
-        <p>¡Responde las preguntas y salva a la Profesora Rosa del dragón!</p>
-        <button class="btn-start" onclick="initGame()">Iniciar el Juego</button>
+    <div class="header-ucv">
+        <h1>Universidad César Vallejo</h1>
+        <p>Escuela de Educación Primaria</p>
     </div>
 
-    <header class="header-ucv">
-        <div class="header-logo-section">
-            <img src="logo_ucv.png" alt="Logo UCV" onerror="this.style.display='none';">
-            <div><h1>UCV - PRIMARIA</h1></div>
-        </div>
-    </header>
-
-    <div class="main-content">
-        <div id="panel-visual">
-            <div id="dragon-sprite" class="dragon"></div>
-            <div id="effect-layer" class="effect-overlay"></div>
-        </div>
-
-        <div id="panel-trivia">
-            <div class="timer-container-bar"><div id="timer-progress" class="timer-progress"></div></div>
-            <p id="question-text" style="font-weight: 700; font-size: 1.1rem;"></p>
-            <div id="options-grid" style="display: grid; gap: 10px;"></div>
-        </div>
+    <div class="game-status">
+        <div>Score: <span id="score">0</span>/70</div>
+        <div class="hearts" id="hearts">❤️❤️❤️</div>
     </div>
+
+    <div id="panel-visual">
+        <div id="dragon">🐉</div>
+        <img id="question-image" src="https://placehold.co/800x200/blue/white?text=Imagen+Guia" alt="Pista">
+    </div>
+
+    <div class="trivia-area">
+        <div class="timer-bar"><div id="timer-progress"></div></div>
+        <h3 id="question-text">Cargando...</h3>
+        <div class="btn-grid" id="btn-grid"></div>
+    </div>
+</div>
+
+<div id="end-overlay" class="overlay">
+    <h2 id="end-title">Resultado</h2>
+    <p id="end-msg"></p>
+    <button class="btn-restart" onclick="startGame()">Reiniciar Juego</button>
 </div>
 
 <script>
     const QUESTIONS = [
-        { q: "¿Cuál es la primera fase del ciclo de vida de una planta?", options: ["Nacimiento desde una semilla", "Floración", "Fruto"], correct: 0 },
-        { q: "¿Qué necesita la semilla para despertar?", options: ["Sombra", "Agua y sol", "Arena"], correct: 1 }
+        { q: "¿Cuál es la primera fase del ciclo de vida de una planta?", img: "https://placehold.co/800x200/green/white?text=Semilla", options: ["Semilla", "Fruto", "Flor"], correct: 0 },
+        { q: "¿Qué necesita la planta para realizar fotosíntesis?", img: "https://placehold.co/800x200/yellow/black?text=Sol", options: ["Luz solar", "Arena", "Roca"], correct: 0 },
+        { q: "¿Qué parte de la planta absorbe agua?", img: "https://placehold.co/800x200/brown/white?text=Raiz", options: ["Hojas", "Raíz", "Fruto"], correct: 1 },
+        { q: "¿Cómo se llama el proceso de respiración de la planta?", img: "https://placehold.co/800x200/purple/white?text=Fotosintesis", options: ["Fotosíntesis", "Crecimiento", "Sueño"], correct: 0 },
+        { q: "¿Qué producen las flores?", img: "https://placehold.co/800x200/pink/white?text=Frutos", options: ["Piedras", "Frutos", "Metal"], correct: 1 },
+        { q: "¿Qué gas necesitan las plantas?", img: "https://placehold.co/800x200/teal/white?text=CO2", options: ["Oxígeno", "Dióxido de Carbono", "Helio"], correct: 1 },
+        { q: "¿En qué lugar crecen mejor las plantas?", img: "https://placehold.co/800x200/orange/white?text=Tierra", options: ["Tierra fértil", "Cemento", "Agua salada"], correct: 0 }
     ];
 
-    let timeLeft = 19;
-    let timerInterval = null;
-    let currentIdx = 0;
+    let score = 0, lives = 3, currentIdx = 0, dragonPos = -10, timer = 100, interval;
 
-    function initGame() {
-        document.getElementById('startScreen').style.display = 'none';
-        loadQuestion(0);
-        startTimer();
+    function startGame() {
+        score = 0; lives = 3; currentIdx = 0; dragonPos = -10;
+        document.getElementById('end-overlay').style.display = 'none';
+        updateUI();
+        loadQuestion();
+        runTimer();
     }
 
-    function loadQuestion(idx) {
-        currentIdx = idx;
-        document.getElementById('question-text').textContent = QUESTIONS[idx].q;
-        const grid = document.getElementById('options-grid');
+    function runTimer() {
+        clearInterval(interval);
+        timer = 100;
+        interval = setInterval(() => {
+            timer -= 0.2;
+            dragonPos += 0.15;
+            document.getElementById('timer-progress').style.width = timer + "%";
+            document.getElementById('dragon').style.left = dragonPos + "%";
+            
+            if (dragonPos >= 90) gameOver(false);
+            if (timer <= 0) { lives--; timer = 100; updateUI(); if(lives <= 0) gameOver(false); }
+        }, 100);
+    }
+
+    function loadQuestion() {
+        const q = QUESTIONS[currentIdx];
+        document.getElementById('question-text').textContent = q.q;
+        document.getElementById('question-image').src = q.img;
+        const grid = document.getElementById('btn-grid');
         grid.innerHTML = '';
-        QUESTIONS[idx].options.forEach((opt, i) => {
+        q.options.forEach((opt, i) => {
             const btn = document.createElement('button');
             btn.className = 'btn-option';
-            btn.textContent = (i+1) + ". " + opt;
-            btn.onclick = () => checkAnswer(i, btn);
+            btn.textContent = opt;
+            btn.onclick = () => checkAnswer(i);
             grid.appendChild(btn);
         });
     }
 
-    function checkAnswer(selected, btn) {
-        clearInterval(timerInterval);
-        if (selected === QUESTIONS[currentIdx].correct) {
-            btn.classList.add('correct');
-            triggerWindEffect();
-            setTimeout(() => {
-                if(currentIdx < QUESTIONS.length - 1) {
-                    loadQuestion(currentIdx + 1);
-                    startTimer();
-                } else { alert("¡Has salvado a la profesora!"); }
-            }, 1000);
+    function checkAnswer(idx) {
+        if (idx === QUESTIONS[currentIdx].correct) {
+            score += 10;
+            dragonPos -= 10; // Retrocede
+            if (dragonPos < -10) dragonPos = -10;
         } else {
-            btn.classList.add('incorrect');
-            alert("¡Oh no! El dragón se acerca.");
-            startTimer();
+            lives--;
         }
+        updateUI();
+        if (lives <= 0) { gameOver(false); return; }
+        currentIdx++;
+        if (currentIdx >= QUESTIONS.length) { gameOver(score >= 70); }
+        else { loadQuestion(); }
     }
 
-    function triggerWindEffect() {
-        const dragon = document.getElementById('dragon-sprite');
-        dragon.style.left = '-25%'; // Retrocede
-        const layer = document.getElementById('effect-layer');
-        for(let i=0; i<8; i++) {
-            const p = document.createElement('div');
-            p.className = 'wind-particle';
-            p.innerHTML = '✨';
-            p.style.top = (20 + Math.random()*50) + '%';
-            p.style.animationDelay = (i*0.1) + 's';
-            layer.appendChild(p);
-            setTimeout(() => p.remove(), 1000);
-        }
+    function updateUI() {
+        document.getElementById('score').textContent = score;
+        document.getElementById('hearts').textContent = "❤️".repeat(lives);
     }
 
-    function startTimer() {
-        timeLeft = 19;
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            timeLeft -= 0.1;
-            document.getElementById('timer-progress').style.width = (timeLeft / 19 * 100) + "%";
-            // El dragón avanza hacia la torre (derecha)
-            const progress = (19 - timeLeft) / 19;
-            document.getElementById('dragon-sprite').style.left = (-15 + (progress * 70)) + "%"; 
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                alert("¡El dragón ha llegado a la torre!");
-            }
-        }, 100);
+    function gameOver(won) {
+        clearInterval(interval);
+        const overlay = document.getElementById('end-overlay');
+        document.getElementById('end-title').textContent = won ? "¡Victoria! 🎉" : "¡El Dragón Ganó! 🐲";
+        document.getElementById('end-msg').textContent = won ? `¡Has salvado a la Profe! Puntaje: ${score}` : "¡La profesora necesita tu ayuda!";
+        overlay.style.display = 'flex';
     }
+
+    startGame();
 </script>
 </body>
 </html>
