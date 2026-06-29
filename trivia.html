@@ -7,143 +7,143 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
-        body { font-family: 'Fredoka', sans-serif; }
-        .game-transition { transition: all 0.3s ease; }
+        body { font-family: 'Fredoka', sans-serif; background-color: #f0f4f8; }
+        #stage { background-image: url('profesora.png'); background-size: cover; background-position: center; border-bottom: 4px solid #1e40af; }
     </style>
 </head>
-<body class="bg-blue-50 flex items-center justify-center min-h-screen p-4">
+<body class="flex items-center justify-center min-h-screen p-4">
 
-<div id="game-container" class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border-4 border-blue-600">
-    <!-- Header -->
-    <div class="bg-blue-600 text-white p-6 text-center">
-        <h1 class="text-2xl font-bold">Universidad César Vallejo</h1>
-        <p class="text-blue-100 opacity-90">Escuela de Educación Primaria</p>
-    </div>
-
-    <!-- Status Bar -->
-    <div class="flex justify-between items-center px-6 py-4 bg-gray-50 border-b">
-        <div class="font-bold text-lg text-blue-900">Score: <span id="score">0</span>/70</div>
-        <div id="hearts" class="flex gap-1 text-2xl text-red-500">
-            <span>❤️</span><span>❤️</span><span>❤️</span>
-        </div>
-    </div>
-
-    <!-- Visual Panel (El Castillo) -->
-    <div id="panel-visual" class="relative h-64 bg-slate-800 overflow-hidden">
-        <!-- Fondo del Castillo -->
-        <img src="https://placehold.co/800x400/334155/white?text=Castillo+del+Saber" alt="Castillo" class="w-full h-full object-cover opacity-60">
+    <div id="game-container" class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border-4 border-blue-700">
         
-        <!-- Dragón -->
-        <div id="dragon" class="absolute left-0 bottom-10 text-5xl transition-all duration-500 ease-linear z-10">
-            🐉
+        <!-- Encabezado solicitado -->
+        <div class="bg-blue-700 text-white p-6 text-center">
+            <h1 class="text-2xl font-bold">Universidad César Vallejo</h1>
+            <p class="text-blue-100 font-medium">Escuela de Educación Primaria</p>
+        </div>
+
+        <!-- Barra de estado -->
+        <div class="flex justify-between items-center px-8 py-4 bg-blue-50 border-b border-blue-100">
+            <div class="text-blue-900 font-bold text-xl">Puntaje: <span id="score">0</span>/70</div>
+            <div id="hearts" class="flex gap-2 text-2xl">❤️ ❤️ ❤️</div>
+        </div>
+
+        <!-- Escenario con Dragón -->
+        <div id="stage" class="relative h-64 overflow-hidden">
+            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-4 left-0 w-24 h-24 transition-all duration-300 ease-linear z-10" onerror="this.style.display='none'">
+        </div>
+
+        <!-- Barra de Tiempo -->
+        <div class="px-6 py-4">
+            <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden border border-gray-300">
+                <div id="timer-bar" class="h-full bg-emerald-500 w-full transition-all duration-100 ease-linear shadow-inner"></div>
+            </div>
+        </div>
+
+        <!-- Preguntas -->
+        <div class="p-6">
+            <div id="q-image-container" class="mb-4 flex justify-center"></div>
+            <h3 id="question-text" class="text-xl font-bold text-gray-800 mb-6 text-center">Cargando desafío...</h3>
+            <div id="btn-grid" class="grid gap-3"></div>
         </div>
     </div>
 
-    <!-- Timer -->
-    <div class="px-6 pt-4">
-        <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-            <div id="timer-bar" class="h-full bg-green-500 w-full transition-all duration-100 ease-linear"></div>
+    <!-- Overlay Final -->
+    <div id="end-overlay" class="fixed inset-0 bg-blue-900/90 hidden items-center justify-center z-50">
+        <div class="bg-white p-10 rounded-3xl text-center max-w-sm mx-4 shadow-2xl">
+            <h2 id="end-title" class="text-4xl font-bold mb-4 text-blue-900">Resultado</h2>
+            <p id="end-msg" class="text-gray-600 text-lg mb-8"></p>
+            <button onclick="startGame()" class="bg-blue-600 text-white w-full py-4 rounded-xl font-bold text-lg hover:bg-blue-700">
+                Reiniciar Misión
+            </button>
         </div>
     </div>
 
-    <!-- Trivia -->
-    <div class="p-6">
-        <h3 id="question-text" class="text-xl font-bold text-gray-800 mb-6">Cargando pregunta...</h3>
-        <div id="btn-grid" class="grid gap-3"></div>
-    </div>
-</div>
+    <script>
+        const QUESTIONS = [
+            { q: "¿Cuál es la primera fase del ciclo de vida de una planta?", img: "semilla.png", options: ["Semilla", "Fruto", "Flor"], correct: 0 },
+            { q: "¿Qué necesita la planta para realizar fotosíntesis?", img: "sol.png", options: ["Luz solar", "Arena", "Roca"], correct: 0 },
+            { q: "¿Qué parte de la planta absorbe agua?", img: "raiz.png", options: ["Hojas", "Raíz", "Fruto"], correct: 1 }
+        ];
 
-<!-- End Overlay -->
-<div id="end-overlay" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
-    <div class="bg-white p-8 rounded-3xl text-center max-w-sm mx-4">
-        <h2 id="end-title" class="text-3xl font-bold mb-4">Resultado</h2>
-        <p id="end-msg" class="text-gray-600 mb-6"></p>
-        <button onclick="startGame()" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 transition">
-            Reiniciar Juego
-        </button>
-    </div>
-</div>
+        let score = 0, lives = 3, currentIdx = 0, dragonPos = 0, timer = 100, interval;
 
-<script>
-    const QUESTIONS = [
-        { q: "¿Cuál es la primera fase del ciclo de vida de una planta?", img: "https://placehold.co/800x200/green/white?text=Semilla", options: ["Semilla", "Fruto", "Flor"], correct: 0 },
-        { q: "¿Qué necesita la planta para realizar fotosíntesis?", img: "https://placehold.co/800x200/yellow/black?text=Luz+Solar", options: ["Luz solar", "Arena", "Roca"], correct: 0 },
-        { q: "¿Qué parte de la planta absorbe agua?", img: "https://placehold.co/800x200/brown/white?text=Raiz", options: ["Hojas", "Raíz", "Fruto"], correct: 1 },
-        { q: "¿Cómo se llama el proceso de respiración de la planta?", img: "https://placehold.co/800x200/purple/white?text=Fotosintesis", options: ["Fotosíntesis", "Crecimiento", "Sueño"], correct: 0 },
-        { q: "¿Qué producen las flores?", img: "https://placehold.co/800x200/pink/white?text=Frutos", options: ["Piedras", "Frutos", "Metal"], correct: 1 },
-        { q: "¿Qué gas necesitan las plantas?", img: "https://placehold.co/800x200/teal/white?text=CO2", options: ["Oxígeno", "Dióxido de Carbono", "Helio"], correct: 1 },
-        { q: "¿En qué lugar crecen mejor las plantas?", img: "https://placehold.co/800x200/orange/white?text=Tierra", options: ["Tierra fértil", "Cemento", "Agua salada"], correct: 0 }
-    ];
-
-    let score = 0, lives = 3, currentIdx = 0, dragonPos = 0, timer = 100, interval;
-
-    function startGame() {
-        score = 0; lives = 3; currentIdx = 0; dragonPos = 0; timer = 100;
-        document.getElementById('end-overlay').style.display = 'none';
-        updateUI();
-        loadQuestion();
-        runTimer();
-    }
-
-    function runTimer() {
-        clearInterval(interval);
-        interval = setInterval(() => {
-            timer -= 0.1;
-            dragonPos += 0.08; // El dragón avanza lentamente
-            
-            document.getElementById('timer-bar').style.width = timer + "%";
-            document.getElementById('dragon').style.left = dragonPos + "%";
-            
-            if (dragonPos >= 85) gameOver(false);
-            if (timer <= 0) { lives--; timer = 100; updateUI(); if(lives <= 0) gameOver(false); }
-        }, 100);
-    }
-
-    function loadQuestion() {
-        const q = QUESTIONS[currentIdx];
-        document.getElementById('question-text').textContent = q.q;
-        const grid = document.getElementById('btn-grid');
-        grid.innerHTML = '';
-        q.options.forEach((opt, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'w-full p-4 border-2 border-blue-200 rounded-xl font-bold hover:bg-blue-50 transition';
-            btn.textContent = opt;
-            btn.onclick = () => checkAnswer(i);
-            grid.appendChild(btn);
-        });
-    }
-
-    function checkAnswer(idx) {
-        if (idx === QUESTIONS[currentIdx].correct) {
-            score += 10;
-            dragonPos -= 12; // Retrocede al acertar
-            if (dragonPos < 0) dragonPos = 0;
-        } else {
-            lives--;
-            // El dragón sigue avanzando aunque falles
+        function startGame() {
+            score = 0; lives = 3; currentIdx = 0; dragonPos = 0; timer = 100;
+            document.getElementById('end-overlay').style.display = 'none';
+            document.getElementById('dragon').style.left = "0%";
+            updateUI();
+            loadQuestion();
+            runTimer();
         }
-        updateUI();
-        if (lives <= 0) { gameOver(false); return; }
-        
-        currentIdx++;
-        if (currentIdx >= QUESTIONS.length) { gameOver(score >= 70); }
-        else { loadQuestion(); }
-    }
 
-    function updateUI() {
-        document.getElementById('score').textContent = score;
-        document.getElementById('hearts').innerHTML = "❤️".repeat(lives);
-    }
+        function runTimer() {
+            clearInterval(interval);
+            interval = setInterval(() => {
+                timer -= 0.1;
+                // El dragón avanza constantemente
+                dragonPos += 0.05; 
+                document.getElementById('timer-bar').style.width = timer + "%";
+                document.getElementById('dragon').style.left = dragonPos + "%";
+                
+                // Si el dragón llega a la profesora (85%)
+                if (dragonPos >= 85) gameOver(false);
+                
+                // Si se acaba el tiempo, resta una vida y resetea el tiempo
+                if (timer <= 0) { 
+                    lives--; 
+                    timer = 100; 
+                    updateUI(); 
+                    if(lives <= 0) gameOver(false); 
+                }
+            }, 100);
+        }
 
-    function gameOver(won) {
-        clearInterval(interval);
-        const overlay = document.getElementById('end-overlay');
-        document.getElementById('end-title').textContent = won ? "¡Victoria! 🎉" : "¡El Dragón Ganó! 🐲";
-        document.getElementById('end-msg').textContent = won ? `¡Has salvado a la Profe! Puntaje: ${score}` : "¡La profesora necesita tu ayuda!";
-        overlay.style.display = 'flex';
-    }
+        function loadQuestion() {
+            const q = QUESTIONS[currentIdx];
+            document.getElementById('question-text').textContent = q.q;
+            const container = document.getElementById('q-image-container');
+            container.innerHTML = q.img ? `<img src="${q.img}" class="h-20 w-auto rounded-lg shadow-md" onerror="this.style.display='none'">` : '';
+            const grid = document.getElementById('btn-grid');
+            grid.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full p-3 border-2 border-blue-200 rounded-xl font-semibold hover:bg-blue-50';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(i);
+                grid.appendChild(btn);
+            });
+        }
 
-    startGame();
-</script>
+        function checkAnswer(idx) {
+            if (idx === QUESTIONS[currentIdx].correct) {
+                score += 25;
+                // Retroceso solo si acierta
+                dragonPos = Math.max(0, dragonPos - 15);
+            } else {
+                // Al fallar, pierde vida, el dragón NO retrocede
+                lives--;
+            }
+            updateUI();
+            if (lives <= 0) { gameOver(false); return; }
+            currentIdx++;
+            if (currentIdx >= QUESTIONS.length) { gameOver(score >= 70); }
+            else { loadQuestion(); }
+        }
+
+        function updateUI() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('hearts').textContent = "❤️".repeat(lives);
+        }
+
+        function gameOver(won) {
+            clearInterval(interval);
+            const overlay = document.getElementById('end-overlay');
+            document.getElementById('end-title').textContent = won ? "¡Victoria! 🎉" : "¡El Dragón Ganó! 🐲";
+            document.getElementById('end-msg').textContent = won ? `¡Has salvado a la profesora! Puntaje final: ${score}` : "¡Sigue intentando, ella te necesita!";
+            overlay.style.display = 'flex';
+        }
+
+        startGame();
+    </script>
 </body>
 </html>
