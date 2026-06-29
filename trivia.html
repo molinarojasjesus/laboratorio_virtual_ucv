@@ -4,76 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Laberinto del Saber | UCV</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --primary-blue: #0056b3;
-            --accent-yellow: #f1c40f;
-            --accent-red: #e74c3c;
-            --accent-green: #2ecc71;
-        }
-        body { font-family: 'Quicksand', sans-serif; background: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        #game-container { background: white; width: 95%; max-width: 800px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; border: 4px solid var(--primary-blue); }
-
-        .header-ucv { background: var(--primary-blue); color: white; padding: 15px; text-align: center; }
-        .header-ucv h1 { margin: 0; font-size: 1.2rem; }
-        .header-ucv p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
-
-        .game-status { display: flex; justify-content: space-between; padding: 10px 20px; background: #eef2f7; font-weight: 700; align-items: center; }
-        .hearts { color: var(--accent-red); font-size: 1.5rem; }
-        
-        #panel-visual { height: 200px; position: relative; background: #bdc3c7; overflow: hidden; }
-        #dragon { position: absolute; left: -100px; top: 50px; font-size: 3rem; transition: left 0.5s linear; z-index: 2; }
-        #question-image { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
-        
-        .trivia-area { padding: 20px; }
-        .timer-bar { height: 10px; background: #ddd; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
-        #timer-progress { height: 100%; width: 100%; background: var(--accent-green); transition: width 0.1s linear; }
-
-        .btn-grid { display: grid; gap: 10px; margin-top: 15px; }
-        .btn-option { padding: 15px; border: 2px solid var(--primary-blue); border-radius: 10px; cursor: pointer; background: white; font-weight: 600; }
-        .btn-option:hover { background: #e3f2fd; }
-
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 10; display: none; }
-        .btn-restart { padding: 15px 30px; background: var(--accent-yellow); border: none; border-radius: 50px; font-weight: 700; cursor: pointer; margin-top: 20px; }
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        body { font-family: 'Fredoka', sans-serif; }
+        .game-transition { transition: all 0.3s ease; }
     </style>
 </head>
-<body>
+<body class="bg-blue-50 flex items-center justify-center min-h-screen p-4">
 
-<div id="game-container">
-    <div class="header-ucv">
-        <h1>Universidad César Vallejo</h1>
-        <p>Escuela de Educación Primaria</p>
+<div id="game-container" class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border-4 border-blue-600">
+    <!-- Header -->
+    <div class="bg-blue-600 text-white p-6 text-center">
+        <h1 class="text-2xl font-bold">Universidad César Vallejo</h1>
+        <p class="text-blue-100 opacity-90">Escuela de Educación Primaria</p>
     </div>
 
-    <div class="game-status">
-        <div>Score: <span id="score">0</span>/70</div>
-        <div class="hearts" id="hearts">❤️❤️❤️</div>
+    <!-- Status Bar -->
+    <div class="flex justify-between items-center px-6 py-4 bg-gray-50 border-b">
+        <div class="font-bold text-lg text-blue-900">Score: <span id="score">0</span>/70</div>
+        <div id="hearts" class="flex gap-1 text-2xl text-red-500">
+            <span>❤️</span><span>❤️</span><span>❤️</span>
+        </div>
     </div>
 
-    <div id="panel-visual">
-        <div id="dragon">🐉</div>
-        <img id="question-image" src="https://placehold.co/800x200/blue/white?text=Imagen+Guia" alt="Pista">
+    <!-- Visual Panel (El Castillo) -->
+    <div id="panel-visual" class="relative h-64 bg-slate-800 overflow-hidden">
+        <!-- Fondo del Castillo -->
+        <img src="https://placehold.co/800x400/334155/white?text=Castillo+del+Saber" alt="Castillo" class="w-full h-full object-cover opacity-60">
+        
+        <!-- Dragón -->
+        <div id="dragon" class="absolute left-0 bottom-10 text-5xl transition-all duration-500 ease-linear z-10">
+            🐉
+        </div>
     </div>
 
-    <div class="trivia-area">
-        <div class="timer-bar"><div id="timer-progress"></div></div>
-        <h3 id="question-text">Cargando...</h3>
-        <div class="btn-grid" id="btn-grid"></div>
+    <!-- Timer -->
+    <div class="px-6 pt-4">
+        <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div id="timer-bar" class="h-full bg-green-500 w-full transition-all duration-100 ease-linear"></div>
+        </div>
+    </div>
+
+    <!-- Trivia -->
+    <div class="p-6">
+        <h3 id="question-text" class="text-xl font-bold text-gray-800 mb-6">Cargando pregunta...</h3>
+        <div id="btn-grid" class="grid gap-3"></div>
     </div>
 </div>
 
-<div id="end-overlay" class="overlay">
-    <h2 id="end-title">Resultado</h2>
-    <p id="end-msg"></p>
-    <button class="btn-restart" onclick="startGame()">Reiniciar Juego</button>
+<!-- End Overlay -->
+<div id="end-overlay" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-3xl text-center max-w-sm mx-4">
+        <h2 id="end-title" class="text-3xl font-bold mb-4">Resultado</h2>
+        <p id="end-msg" class="text-gray-600 mb-6"></p>
+        <button onclick="startGame()" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 transition">
+            Reiniciar Juego
+        </button>
+    </div>
 </div>
 
 <script>
     const QUESTIONS = [
         { q: "¿Cuál es la primera fase del ciclo de vida de una planta?", img: "https://placehold.co/800x200/green/white?text=Semilla", options: ["Semilla", "Fruto", "Flor"], correct: 0 },
-        { q: "¿Qué necesita la planta para realizar fotosíntesis?", img: "https://placehold.co/800x200/yellow/black?text=Sol", options: ["Luz solar", "Arena", "Roca"], correct: 0 },
+        { q: "¿Qué necesita la planta para realizar fotosíntesis?", img: "https://placehold.co/800x200/yellow/black?text=Luz+Solar", options: ["Luz solar", "Arena", "Roca"], correct: 0 },
         { q: "¿Qué parte de la planta absorbe agua?", img: "https://placehold.co/800x200/brown/white?text=Raiz", options: ["Hojas", "Raíz", "Fruto"], correct: 1 },
         { q: "¿Cómo se llama el proceso de respiración de la planta?", img: "https://placehold.co/800x200/purple/white?text=Fotosintesis", options: ["Fotosíntesis", "Crecimiento", "Sueño"], correct: 0 },
         { q: "¿Qué producen las flores?", img: "https://placehold.co/800x200/pink/white?text=Frutos", options: ["Piedras", "Frutos", "Metal"], correct: 1 },
@@ -81,10 +75,10 @@
         { q: "¿En qué lugar crecen mejor las plantas?", img: "https://placehold.co/800x200/orange/white?text=Tierra", options: ["Tierra fértil", "Cemento", "Agua salada"], correct: 0 }
     ];
 
-    let score = 0, lives = 3, currentIdx = 0, dragonPos = -10, timer = 100, interval;
+    let score = 0, lives = 3, currentIdx = 0, dragonPos = 0, timer = 100, interval;
 
     function startGame() {
-        score = 0; lives = 3; currentIdx = 0; dragonPos = -10;
+        score = 0; lives = 3; currentIdx = 0; dragonPos = 0; timer = 100;
         document.getElementById('end-overlay').style.display = 'none';
         updateUI();
         loadQuestion();
@@ -93,14 +87,14 @@
 
     function runTimer() {
         clearInterval(interval);
-        timer = 100;
         interval = setInterval(() => {
-            timer -= 0.2;
-            dragonPos += 0.15;
-            document.getElementById('timer-progress').style.width = timer + "%";
+            timer -= 0.1;
+            dragonPos += 0.08; // El dragón avanza lentamente
+            
+            document.getElementById('timer-bar').style.width = timer + "%";
             document.getElementById('dragon').style.left = dragonPos + "%";
             
-            if (dragonPos >= 90) gameOver(false);
+            if (dragonPos >= 85) gameOver(false);
             if (timer <= 0) { lives--; timer = 100; updateUI(); if(lives <= 0) gameOver(false); }
         }, 100);
     }
@@ -108,12 +102,11 @@
     function loadQuestion() {
         const q = QUESTIONS[currentIdx];
         document.getElementById('question-text').textContent = q.q;
-        document.getElementById('question-image').src = q.img;
         const grid = document.getElementById('btn-grid');
         grid.innerHTML = '';
         q.options.forEach((opt, i) => {
             const btn = document.createElement('button');
-            btn.className = 'btn-option';
+            btn.className = 'w-full p-4 border-2 border-blue-200 rounded-xl font-bold hover:bg-blue-50 transition';
             btn.textContent = opt;
             btn.onclick = () => checkAnswer(i);
             grid.appendChild(btn);
@@ -123,13 +116,15 @@
     function checkAnswer(idx) {
         if (idx === QUESTIONS[currentIdx].correct) {
             score += 10;
-            dragonPos -= 10; // Retrocede
-            if (dragonPos < -10) dragonPos = -10;
+            dragonPos -= 12; // Retrocede al acertar
+            if (dragonPos < 0) dragonPos = 0;
         } else {
             lives--;
+            // El dragón sigue avanzando aunque falles
         }
         updateUI();
         if (lives <= 0) { gameOver(false); return; }
+        
         currentIdx++;
         if (currentIdx >= QUESTIONS.length) { gameOver(score >= 70); }
         else { loadQuestion(); }
@@ -137,7 +132,7 @@
 
     function updateUI() {
         document.getElementById('score').textContent = score;
-        document.getElementById('hearts').textContent = "❤️".repeat(lives);
+        document.getElementById('hearts').innerHTML = "❤️".repeat(lives);
     }
 
     function gameOver(won) {
