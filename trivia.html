@@ -24,7 +24,6 @@
             animation: flap 1.5s ease-in-out infinite;
         }
 
-        /* Animación para los emojis flotantes */
         @keyframes floatUp {
             0% { transform: translateY(100px) scale(0.5); opacity: 0; }
             50% { opacity: 1; }
@@ -61,7 +60,7 @@
 
         <div id="stage" class="relative h-64 overflow-hidden border-b-4 border-blue-700 bg-blue-100">
             <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold text-sm pointer-events-none">[Fondo: profesora.png]</div>
-            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-4 left-0 w-24 h-24 transition-all duration-200 ease-linear z-10 animate-fly" onerror="this.src='https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8yNl9jYXJ0b29uX3JlZF9kcmF静fbmVvbl9saW5lX2FydF9pc29sYXRlZF9vbl9fOTU2NDlhYmMtOTQ3OS00N2EzLWJiYTEtNGVjZTAzMzA0ZTMzLnBuZw.png'">
+            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-4 left-0 w-24 h-24 transition-all duration-200 ease-linear z-10 animate-fly" onerror="this.src='https://placehold.co/100x100?text=🐉'">
             
             <div id="particle-container" class="absolute inset-0 pointer-events-none"></div>
         </div>
@@ -94,30 +93,29 @@
     </div>
 
     <script>
-        // --- BANCO EXTENDIDO A 15 PREGUNTAS ---
+        // --- BANCO CORREGIDO: ETAPAS Y VIDA DE LAS PLANTAS ---
         const ALL_QUESTIONS = [
             { q: "¿Cómo crece el Girasol?", img: "girasol_1.png", options: ["Semilla", "Fruto", "Raíz"], correct: 0 },
             { q: "¿Cómo crece el Maíz?", img: "maiz_1.png", options: ["Semilla", "Roca", "Metal"], correct: 0 },
-            { q: "¿Qué necesita la planta para vivir?", img: "imagen_3.png", options: ["Agua", "Solo luz", "Solo tierra"], correct: 0 },
-            { q: "¿Cuál de estos animales es un mamífero?", img: "https://placehold.co/100x100?text=🐳", options: ["Tiburón", "Ballena", "Pez Payaso"], correct: 1 },
-            { q: "¿Por dónde respiran los peces?", img: "https://placehold.co/100x100?text=🐟", options: ["Pulmones", "Branquias", "La piel"], correct: 1 },
-            { q: "¿Qué gas absorben las plantas para hacer la fotosíntesis?", img: "https://placehold.co/100x100?text=🌱", options: ["Oxígeno", "Dióxido de Carbono", "Nitrógeno"], correct: 1 },
-            { q: "¿Qué tipo de animal es una rana?", img: "https://placehold.co/100x100?text=🐸", options: ["Anfibio", "Reptil", "Mamífero"], correct: 0 },
-            { q: "¿Cuál es el planeta más cercano al Sol?", img: "https://placehold.co/100x100?text=☀️", options: ["Tierra", "Marte", "Mercurio"], correct: 2 },
-            { q: "¿Qué estado del agua es el hielo?", img: "https://placehold.co/100x100?text=❄️", options: ["Líquido", "Sólido", "Gaseoso"], correct: 1 },
-            { q: "¿Cuántos huesos aproximados tiene el cuerpo humano adulto?", img: "https://placehold.co/100x100?text=💀", options: ["102", "206", "300"], correct: 1 },
-            { q: "¿Qué órgano usamos para pensar y controlar el cuerpo?", img: "https://placehold.co/100x100?text=🧠", options: ["Corazón", "Estómago", "Cerebro"], correct: 2 },
-            { q: "¿Qué animal es conocido por ser el mejor amigo del hombre?", img: "https://placehold.co/100x100?text=🐶", options: ["El gato", "El perro", "El loro"], correct: 1 },
-            { q: "¿De dónde obtenemos la energía solar?", img: "https://placehold.co/100x100?text=🔋", options: ["Del Sol", "Del viento", "Del agua"], correct: 0 },
-            { q: "¿Cuál de estos animales es un ave que NO vuela?", img: "https://placehold.co/100x100?text=🐧", options: ["Águila", "Pingüino", "Paloma"], correct: 1 },
-            { q: "¿Qué parte de la planta absorbe el agua del suelo?", img: "https://placehold.co/100x100?text=🪵", options: ["La raíz", "Las hojas", "El tallo"], correct: 0 }
+            { q: "¿Qué necesita la planta para vivir?", img: "imagen_3.png", options: ["Agua, tierra y luz", "Solo oscuridad", "Gaseosa y dulces"], correct: 0 },
+            { q: "¿Cuál es la primera etapa en la vida de una planta?", img: "https://placehold.co/100x100?text=🌱", options: ["La flor", "La semilla", "El fruto"], correct: 1 },
+            { q: "¿Cómo se llama cuando la semilla empieza a brotar?", img: "https://placehold.co/100x100?text=🌿", options: ["Germinación", "Polinización", "Marchitación"], correct: 0 },
+            { q: "¿Qué parte de la planta sostiene las hojas y transporta el agua?", img: "https://placehold.co/100x100?text=🎋", options: ["La raíz", "El tallo", "La flor"], correct: 1 },
+            { q: "¿Por dónde respiran y fabrican su alimento las plantas?", img: "https://placehold.co/100x100?text=🍃", options: ["Por las raíces", "Por las hojas", "Por los frutos"], correct: 1 },
+            { q: "¿Qué parte sujeta con fuerza a la planta al suelo?", img: "https://placehold.co/100x100?text=🪵", options: ["La raíz", "La flor", "El tallo"], correct: 0 },
+            { q: "¿En qué parte de la planta se producen las semillas?", img: "https://placehold.co/100x100?text=🌻", options: ["En el tallo", "En la raíz", "En las flores o frutos"], correct: 2 },
+            { q: "¿Qué gas producen las plantas que es vital para que respiremos?", img: "https://placehold.co/100x100?text=💨", options: ["Oxígeno", "Dióxido de carbono", "Humo"], correct: 0 },
+            { q: "¿Qué proceso usan las plantas para fabricar su alimento con luz solar?", img: "https://placehold.co/100x100?text=☀️", options: ["Fotosíntesis", "Digestión", "Respiración"], correct: 0 },
+            { q: "¿Qué ayuda a transportar el polen de flor en flor?", img: "https://placehold.co/100x100?text=🐝", options: ["Los insectos y el viento", "Las piedras", "Los gusanos de tierra"], correct: 0 },
+            { q: "Cuando una planta es vieja y cumple su ciclo, finalmente...", img: "https://placehold.co/100x100?text=🍂", options: ["Corre", "Muere", "Se vuelve de piedra"], correct: 1 },
+            { q: "¿Qué parte de la planta suele transformarse en un rico fruto?", img: "https://placehold.co/100x100?text=🍎", options: ["La raíz", "La flor", "La espina"], correct: 1 },
+            { q: "¿Qué sustancia verde le da el color a las hojas?", img: "https://placehold.co/100x100?text=🟢", options: ["Clorofila", "Agua dulce", "Pintura"], correct: 0 }
         ];
 
-        let gameQuestions = []; // Aquí guardaremos las preguntas mezcladas en cada partida
+        let gameQuestions = []; 
         let score = 0, lives = 3, currentIdx = 0, dragonPos = 0, timer = 100, interval;
         const TARGET_SCORE = 75;
 
-        // --- SISTEMA DE AUDIO SINTETIZADO (Web Audio API) ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(type) {
@@ -129,8 +127,8 @@
 
             if (type === 'correct') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // Nota C5
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // Nota E5
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
                 gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.2);
@@ -153,9 +151,7 @@
             }
         }
 
-        // --- FUNCIÓN DE ALEATORIEDAD (ALGORITMO FISHER-YATES) ---
         function shuffleQuestions() {
-            // Clonamos el banco de preguntas completo para no destruir el original
             let shuffled = [...ALL_QUESTIONS];
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -166,10 +162,7 @@
 
         function startGame() {
             score = 0; lives = 3; currentIdx = 0; dragonPos = 0; timer = 100;
-            
-            // Mezclamos las preguntas al iniciar o reiniciar
             gameQuestions = shuffleQuestions(); 
-
             document.getElementById('end-overlay').style.display = 'none';
             updateUI();
             loadQuestion();
@@ -208,10 +201,10 @@
 
         function loadQuestion() {
             timer = 100; 
-            const q = gameQuestions[currentIdx]; // Usamos la lista mezclada
+            const q = gameQuestions[currentIdx];
             document.getElementById('question-text').textContent = q.q;
             const container = document.getElementById('q-image-container');
-            container.innerHTML = q.img ? `<img src="${q.img}" class="h-24 w-auto rounded-xl shadow-lg border-2 border-blue-100" onerror="this.src='https://placehold.co/100x100?text=?'">` : '';
+            container.innerHTML = q.img ? `<img src="${q.img}" class="h-24 w-auto rounded-xl shadow-lg border-2 border-blue-100" onerror="this.src='https://placehold.co/100x100?text=🌱'">` : '';
             const grid = document.getElementById('btn-grid');
             grid.innerHTML = '';
             q.options.forEach((opt, i) => {
@@ -258,7 +251,6 @@
             }
             updateUI();
             
-            // Si el jugador ya llegó a los 75 puntos exigidos, ¡gana automáticamente!
             if (score >= TARGET_SCORE) { gameOver(true); return; }
             if (lives <= 0) { gameOver(false); return; }
             
@@ -267,7 +259,6 @@
 
         function nextQuestion() {
             currentIdx++;
-            // Si se acaban las preguntas disponibles en la ronda antes del target
             if (currentIdx >= gameQuestions.length) { 
                 gameOver(score >= TARGET_SCORE); 
             } else { 
@@ -293,11 +284,11 @@
                 playSound('victory');
                 title.textContent = "¡Victoria! 🎉";
                 title.className = "text-3xl font-bold text-emerald-600 mb-2";
-                message.textContent = `¡Increíble! Lograste alcanzar los ${score} puntos requeridos y salvaste el laberinto.`;
+                message.textContent = `¡Increíble! Alcanzaste los ${score} puntos y dominaste el ciclo de vida de las plantas.`;
             } else {
                 title.textContent = "¡Oh no! 💥";
                 title.className = "text-3xl font-bold text-red-600 mb-2";
-                message.textContent = "El dragón atrapó la escuela o te quedaste sin energías. ¡Inténtalo de nuevo!";
+                message.textContent = "El dragón avanzó demasiado o te quedaste sin vidas. ¡Repasa las etapas y vuelve a intentar!";
             }
             
             overlay.style.display = 'flex';
