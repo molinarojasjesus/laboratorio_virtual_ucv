@@ -23,9 +23,24 @@
         .animate-fly {
             animation: flap 1.5s ease-in-out infinite;
         }
+
+        /* Animación para los emojis flotantes */
+        @keyframes floatUp {
+            0% { transform: translateY(100px) scale(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-150px) scale(1.5); opacity: 0; }
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            font-size: 1.5rem;
+            z-index: 40;
+        }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4 relative">
+<body class="flex items-center justify-center min-h-screen p-4 relative overflow-hidden">
 
     <div id="game-container" class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border-4 border-blue-800 relative z-10">
         
@@ -38,18 +53,22 @@
         </div>
 
         <div class="flex justify-between items-center px-8 py-4 bg-blue-50 border-b border-blue-100">
-            <div class="text-blue-900 font-bold text-xl">Puntaje: <span id="score">0</span></div>
+            <div class="text-blue-900 font-bold text-lg">
+                Puntaje: <span id="score" class="text-2xl text-blue-700">0</span> <span class="text-gray-400 font-normal text-sm">/ 75 pts para ganar</span>
+            </div>
             <div id="hearts" class="flex gap-2 text-2xl">❤️ ❤️ ❤️</div>
         </div>
 
         <div id="stage" class="relative h-64 overflow-hidden border-b-4 border-blue-700 bg-blue-100">
             <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold text-sm pointer-events-none">[Fondo: profesora.png]</div>
-            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-4 left-0 w-24 h-24 transition-all duration-300 ease-linear z-10 animate-fly" onerror="this.src='https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8yNl9jYXJ0b29uX3JlZF9kcmFnb25fbmVvbl9saW5lX2FydF9pc29sYXRlZF9vbl9fOTU2NDlhYmMtOTQ3OS00N2EzLWJiYTEtNGVjZTAzMzA0ZTMzLnBuZw.png'">
+            <img id="dragon" src="dragon.png" alt="Dragón" class="absolute bottom-4 left-0 w-24 h-24 transition-all duration-200 ease-linear z-10 animate-fly" onerror="this.src='https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8yNl9jYXJ0b29uX3JlZF9kcmFnb25fbmVvbl9saW5lX2FydF9pc29sYXRlZF9vbl9fOTU2NDlhYmMtOTQ3OS00N2EzLWJiYTEtNGVjZTAzMzA0ZTMzLnBuZw.png'">
+            
+            <div id="particle-container" class="absolute inset-0 pointer-events-none"></div>
         </div>
 
         <div class="px-6 py-4">
-            <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden border border-gray-300">
-                <div id="timer-bar" class="h-full bg-emerald-500 w-full transition-all duration-100 ease-linear shadow-inner"></div>
+            <div class="w-full h-5 bg-gray-200 rounded-full overflow-hidden border border-gray-300 p-0.5">
+                <div id="timer-bar" class="h-full bg-emerald-500 w-full rounded-full transition-all duration-100 ease-linear shadow-inner"></div>
             </div>
         </div>
 
@@ -63,9 +82,9 @@
     <div id="end-overlay" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" style="display: none;">
         <div class="bg-white p-8 rounded-3xl max-w-md w-full text-center border-4 border-blue-600 shadow-2xl">
             <h2 id="end-title" class="text-3xl font-bold mb-2">¡Fin del Juego!</h2>
-            <p id="end-message" class="text-gray-600 mb-6">Mensaje de resultado</p>
+            <p id="end-message" class="text-gray-600 mb-6">Mensaje</p>
             <div class="bg-blue-50 rounded-2xl p-4 mb-6">
-                <span class="text-gray-500 block uppercase tracking-wider text-xs font-bold">Puntaje Final</span>
+                <span class="text-gray-500 block uppercase tracking-wider text-xs font-bold">Tu Puntaje Final</span>
                 <span id="end-score" class="text-4xl font-bold text-blue-800">0</span>
             </div>
             <button onclick="startGame()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-6 rounded-2xl text-xl shadow-lg transition transform active:scale-95">
@@ -82,6 +101,43 @@
         ];
 
         let score = 0, lives = 3, currentIdx = 0, dragonPos = 0, timer = 100, interval;
+        const TARGET_SCORE = 75;
+
+        // --- SISTEMA DE AUDIO SINTETIZADO (Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // Nota C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // Nota E5
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'victory') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            }
+        }
 
         function startGame() {
             score = 0; lives = 3; currentIdx = 0; dragonPos = 0; timer = 100;
@@ -93,24 +149,38 @@
 
         function runTimer() {
             clearInterval(interval);
+            // El juego corre ahora más rápido (aproximadamente 7 segundos por pregunta si no respondes)
             interval = setInterval(() => {
-                timer -= 0.14; 
-                dragonPos += 0.07; 
+                timer -= 1.4; 
+                dragonPos += 0.8; 
                 
-                document.getElementById('timer-bar').style.width = timer + "%";
+                const timerBar = document.getElementById('timer-bar');
+                timerBar.style.width = timer + "%";
                 document.getElementById('dragon').style.left = dragonPos + "%";
+                
+                // Cambio dinámico de color de la barra
+                if (timer > 50) {
+                    timerBar.className = "h-full bg-emerald-500 rounded-full transition-all duration-100 ease-linear shadow-inner";
+                } else if (timer <= 50 && timer > 25) {
+                    timerBar.className = "h-full bg-amber-500 rounded-full transition-all duration-100 ease-linear shadow-inner";
+                } else {
+                    timerBar.className = "h-full bg-red-500 rounded-full transition-all duration-100 ease-linear shadow-inner animate-pulse";
+                }
                 
                 if (dragonPos >= 85) gameOver(false);
                 if (timer <= 0) { 
                     lives--; 
                     timer = 100; 
+                    playSound('wrong');
                     updateUI(); 
                     if(lives <= 0) gameOver(false); 
+                    else nextQuestion();
                 }
             }, 100);
         }
 
         function loadQuestion() {
+            timer = 100; // Resetear el tiempo en cada pregunta
             const q = QUESTIONS[currentIdx];
             document.getElementById('question-text').textContent = q.q;
             const container = document.getElementById('q-image-container');
@@ -119,31 +189,62 @@
             grid.innerHTML = '';
             q.options.forEach((opt, i) => {
                 const btn = document.createElement('button');
-                btn.className = 'w-full p-3 border-2 border-blue-200 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition';
+                btn.className = 'w-full p-3 border-2 border-blue-200 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition bg-white text-gray-700 shadow-sm';
                 btn.textContent = opt;
                 btn.onclick = () => checkAnswer(i);
                 grid.appendChild(btn);
             });
         }
 
-        function shrinkDragon() {
-            // Animación visual de retroceso del dragón al acertar
-            dragonPos = Math.max(0, dragonPos - 15);
-            document.getElementById('dragon').style.left = dragonPos + "%";
+        // EFECTO VISUAL DE EMOJIS
+        function spawnParticles(emoji, count, startFromLeft) {
+            const container = document.getElementById('particle-container');
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.textContent = emoji;
+                p.style.bottom = (Math.random() * 40 + 20) + 'px';
+                
+                if (startFromLeft) {
+                    // Estrellas salen desde donde esté el dragón hacia adelante
+                    p.style.left = (dragonPos + Math.random() * 15) + '%';
+                } else {
+                    // Corazones salen dispersos por toda la zona inferior
+                    p.style.left = (Math.random() * 80 + 10) + '%';
+                }
+                
+                p.style.animationDelay = (Math.random() * 0.3) + 's';
+                container.appendChild(p);
+                setTimeout(() => p.remove(), 1200);
+            }
         }
 
         function checkAnswer(idx) {
             if (idx === QUESTIONS[currentIdx].correct) {
                 score += 25;
-                shrinkDragon();
+                playSound('correct');
+                // El dragón retrocede y se lanzan las partículas
+                dragonPos = Math.max(0, dragonPos - 20);
+                document.getElementById('dragon').style.left = dragonPos + "%";
+                
+                spawnParticles('⭐', 8, true);  // Estrellas empujando al dragón
+                spawnParticles('❤️', 8, false); // Corazones de celebración
             } else {
                 lives--;
+                playSound('wrong');
             }
             updateUI();
             if (lives <= 0) { gameOver(false); return; }
+            nextQuestion();
+        }
+
+        function nextQuestion() {
             currentIdx++;
-            if (currentIdx >= QUESTIONS.length) { gameOver(score >= 50); } // Victoria si consigues al menos 50 puntos
-            else { loadQuestion(); }
+            if (currentIdx >= QUESTIONS.length) { 
+                gameOver(score >= TARGET_SCORE); 
+            } else { 
+                loadQuestion(); 
+            }
         }
 
         function updateUI() {
@@ -161,19 +262,19 @@
             scoreDisplay.textContent = score;
             
             if (won) {
+                playSound('victory');
                 title.textContent = "¡Victoria! 🎉";
                 title.className = "text-3xl font-bold text-emerald-600 mb-2";
-                message.textContent = "¡Increíble! Lograste superar el laberinto y rescatar el conocimiento.";
+                message.textContent = `¡Increíble! Lograste alcanzar los ${score} puntos requeridos y salvaste el laberinto.`;
             } else {
                 title.textContent = "¡Oh no! 💥";
                 title.className = "text-3xl font-bold text-red-600 mb-2";
-                message.textContent = "El dragón te ha alcanzado o te quedaste sin vidas. ¡Inténtalo de nuevo!";
+                message.textContent = "El dragón atrapó la escuela o te quedaste sin energías. ¡Inténtalo de nuevo!";
             }
             
             overlay.style.display = 'flex';
         }
 
-        // Arranca el juego automáticamente
         startGame();
     </script>
 </body>
