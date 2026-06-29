@@ -22,20 +22,20 @@
         .header-ucv { background-color: var(--ucv-blue); color: white; padding: 20px; display: flex; align-items: center; justify-content: space-between; }
         .logo-placeholder { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
         
-        #panel-visual { width: 100%; height: 350px; position: relative; background: #e0f2ff; border-bottom: 4px solid #cbd5e1; overflow: hidden; }
+        #panel-visual { width: 100%; height: 350px; position: relative; background: #e0f2ff; border-bottom: 4px solid #cbd5e1; overflow: hidden; background-image: url('torre_profesora.png'); background-size: cover; background-position: right; }
 
-        .dragon { position: absolute; width: 120px; height: 120px; background: #e74c3c; border-radius: 50%; top: 40%; left: -15%; z-index: 10; transition: left 0.5s linear; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+        .dragon { position: absolute; width: 120px; height: 120px; background-image: url('dragon.png'); background-size: contain; background-repeat: no-repeat; top: 40%; left: -15%; z-index: 10; transition: left 0.5s linear; }
         .dragon.flee { transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1) !important; left: -100% !important; transform: scaleX(-1) scale(0.5); }
 
-        .particle { position: absolute; width: 10px; height: 10px; background: var(--ucv-gold); border-radius: 50%; opacity: 0; }
-        @keyframes blow { 0% { opacity: 1; transform: translate(0,0); } 100% { opacity: 0; transform: translate(-200px, -50px); } }
+        .particle { position: absolute; width: 15px; height: 15px; background: var(--ucv-gold); border-radius: 50%; opacity: 0; pointer-events: none; }
+        @keyframes blow { 0% { opacity: 1; transform: translate(0,0); } 100% { opacity: 0; transform: translate(-300px, -100px) rotate(360deg); } }
 
         #panel-trivia { padding: 30px; }
         .timer-bar { width: 100%; height: 15px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
         #progress { height: 100%; width: 100%; background: linear-gradient(to right, var(--accent-green), var(--ucv-gold), var(--accent-red)); transition: width 0.1s linear; }
 
         .btn-option { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #cbd5e1; background: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .btn-option:hover { border-color: var(--ucv-blue); }
+        .btn-option:hover { border-color: var(--ucv-blue); transform: scale(1.02); }
     </style>
 </head>
 <body>
@@ -47,7 +47,7 @@
     </header>
 
     <div id="panel-visual">
-        <div id="dragon-sprite" class="dragon"><i class="fa-solid fa-dragon"></i></div>
+        <div id="dragon-sprite" class="dragon"></div>
         <div id="particles"></div>
     </div>
 
@@ -106,12 +106,12 @@
         dragon.classList.add('flee');
         
         // Crear partículas (efecto viento)
-        for(let i=0; i<10; i++) {
+        for(let i=0; i<15; i++) {
             const p = document.createElement('div');
             p.className = 'particle';
-            p.style.top = (Math.random()*100) + '%';
+            p.style.top = (40 + Math.random()*20) + '%';
             p.style.left = '20%';
-            p.style.animation = 'blow 1s forwards';
+            p.style.animation = `blow ${0.5 + Math.random()}s forwards`;
             document.getElementById('particles').appendChild(p);
         }
 
@@ -119,6 +119,7 @@
             dragon.classList.remove('flee');
             dragon.style.left = "-15%";
             document.getElementById('particles').innerHTML = '';
+            timeLeft = 20; // Reinicia el tiempo al ganar
         }, 1500);
     }
 
@@ -128,12 +129,13 @@
             timeLeft -= 0.1;
             document.getElementById('progress').style.width = (timeLeft / 20 * 100) + "%";
             
-            const pos = -15 + ((20 - timeLeft) / 20 * 110);
+            // El dragón se mueve desde -15% hacia la torre (que está a la derecha)
+            const pos = -15 + ((20 - timeLeft) / 20 * 95);
             dragon.style.left = pos + "%";
 
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
-                alert("¡El dragón ha llegado!");
+                alert("¡El dragón ha llegado a la torre!");
             }
         }, 100);
     }
